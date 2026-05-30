@@ -7,17 +7,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary: #1e3a8a;
-            --primary-light: #2563eb;
-            --secondary: #0d9488;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --accent: #e11d48;
-            --border: #e2e8f0;
-            --graph-bg: #0f172a;
-            --card-bg: #ffffff;
-            --status-good: #10b981;
-            --status-warn: #f59e0b;
+            --bg-deep: #0b0f19;
+            --panel-bg: #131c2e;
+            --panel-border: rgba(0, 255, 204, 0.15);
+            --neon-cyan: #00ffcc;
+            --neon-magenta: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-yellow: #f59e0b;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --gradient-header: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
         }
 
         * {
@@ -28,45 +27,52 @@
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
             line-height: 1.6;
-            color: var(--dark);
-            background-color: #f1f5f9;
+            padding-bottom: 60px;
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary), #1e40af);
-            color: white;
-            padding: 45px 20px;
+            background: var(--gradient-header);
+            border-bottom: 3px solid var(--neon-cyan);
+            padding: 40px 20px;
             text-align: center;
-            border-bottom: 5px solid var(--secondary);
             position: relative;
+            box-shadow: 0 10px 30px rgba(0, 255, 204, 0.05);
         }
 
         .project-id {
             position: absolute;
             top: 15px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.85rem;
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
         .header-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .header-sub {
-            font-size: 1.3rem;
-            color: #93c5fd;
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
             margin-bottom: 30px;
-            font-weight: 500;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .author-grid {
@@ -74,23 +80,22 @@
             margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            font-size: 0.95rem;
+            gap: 25px;
             text-align: left;
         }
 
         .author-card {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 18px;
-            border-radius: 6px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
         }
 
         .author-card h4 {
-            color: #fca5a5;
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            color: var(--neon-magenta);
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 5px;
             text-transform: uppercase;
             font-size: 0.85rem;
@@ -98,75 +103,81 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 40px auto;
-            padding: 0 20px;
+            padding: 0 24px;
         }
 
         .main-layout {
             display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 30px;
+            grid-template-columns: 3.2fr 1fr;
+            gap: 35px;
         }
 
-        @media(max-width: 1100px) {
+        @media(max-width: 1200px) {
             .main-layout { grid-template-columns: 1fr; }
         }
 
         section {
-            background: var(--card-bg);
+            background: var(--panel-bg);
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.06);
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 35px;
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
         h2 {
-            color: var(--primary);
+            color: #fff;
             margin-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
             padding-bottom: 10px;
             display: flex;
             align-items: center;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.5px;
         }
 
-        h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 24px;
+            background: var(--neon-cyan);
+            margin-right: 12px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--neon-cyan);
         }
 
         .abstract-callout {
-            background: #f0fdfa;
-            border-left: 5px solid var(--secondary);
-            padding: 22px;
-            border-radius: 0 8px 8px 0;
-            font-size: 1.05rem;
+            background: rgba(5, 217, 232, 0.04);
+            border-left: 4px solid var(--neon-blue);
+            padding: 25px;
+            border-radius: 0 16px 16px 0;
+            font-size: 1.1rem;
             line-height: 1.7;
-            margin-bottom: 15px;
+            color: #cbd5e1;
         }
 
         .keywords {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #475569;
+            margin-top: 20px;
+            font-size: 0.95rem;
         }
 
         .keywords span {
-            background: #e2e8f0;
-            padding: 3px 8px;
-            border-radius: 4px;
+            background: rgba(0, 255, 204, 0.15);
+            padding: 4px 10px;
+            border-radius: 6px;
             font-weight: 600;
-            margin-right: 5px;
-            color: var(--dark);
+            margin-right: 8px;
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 255, 204, 0.3);
         }
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 25px;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 30px;
             margin-top: 15px;
         }
 
@@ -175,144 +186,152 @@
         }
 
         .subject-list-container {
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
             padding: 15px;
-            max-height: 640px;
+            max-height: 720px;
             overflow-y: auto;
-            background: #f8fafc;
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .subject-btn {
             width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
             text-align: left;
             cursor: pointer;
+            color: var(--text-light);
             font-weight: 600;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .subject-btn:hover {
-            background: #f0fdfa;
-            border-color: var(--secondary);
-            transform: translateX(2px);
+            background: rgba(5, 217, 232, 0.08);
+            border-color: var(--neon-blue);
+            transform: translateX(4px);
         }
 
         .subject-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+            background: linear-gradient(90deg, rgba(0, 255, 204, 0.2) 0%, rgba(5, 217, 232, 0.1) 100%);
+            color: #fff;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);
         }
 
         .subject-btn .badge {
-            background: #e2e8f0;
-            color: var(--dark);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-muted);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
         }
 
         .subject-btn.active .badge {
-            background: var(--secondary);
-            color: white;
+            background: var(--neon-cyan);
+            color: var(--bg-deep);
+            font-weight: bold;
         }
 
         .analysis-display-panel {
-            background: #f8fafc;
-            border: 2px solid var(--primary);
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(5, 217, 232, 0.3);
+            border-radius: 16px;
+            padding: 30px;
         }
 
-        /* Panel Title Flex Row to place Heart Animation */
         .panel-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
         }
 
-        /* Live Heart Pumping Container Layout */
+        /* 3D Real Heart Simulation Container Box */
         .heart-visualization-box {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-width: 75px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .live-pumping-heart {
-            fill: var(--accent);
-            width: 42px;
-            height: 42px;
-            transform-origin: center;
-            filter: drop-shadow(0px 2px 6px rgba(225, 29, 72, 0.4));
-            animation: physiological-pulse 0.7s infinite cubic-bezier(0.215, 0.610, 0.355, 1);
+        .heart-canvas-container {
+            width: 110px;
+            height: 110px;
+            position: relative;
+        }
+
+        .heart-text-metrics {
+            margin-left: 15px;
+            text-align: left;
         }
 
         .heart-bpm-counter {
-            font-size: 0.75rem;
+            font-size: 2rem;
             font-weight: 800;
-            color: var(--accent);
-            margin-top: 2px;
-            letter-spacing: 0.5px;
+            color: var(--neon-magenta);
+            line-height: 1;
+            text-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
         }
 
-        /* Realistic Multi-Phase Cardiac Contraction Sequence */
-        @keyframes physiological-pulse {
-            0% { transform: scale(0.92); }
-            28% { transform: scale(1.15); } /* Systolic Contraction Push */
-            42% { transform: scale(0.98); } /* Short Valvular Recoil */
-            56% { transform: scale(1.08); } /* Secondary Atrial Refill Peak */
-            100% { transform: scale(0.92); } /* Diastolic Relaxation */
+        .heart-bpm-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .metric-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
-        @media(max-width: 550px) {
+        @media(max-width: 650px) {
             .metric-grid { grid-template-columns: 1fr; }
         }
 
         .metric-card {
-            background: white;
-            padding: 14px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+        }
+
+        .metric-card:hover {
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .metric-card span {
             display: block;
-            font-size: 0.8rem;
-            color: #64748b;
+            font-size: 0.75rem;
+            color: var(--text-muted);
             text-transform: uppercase;
             font-weight: 700;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .metric-card strong {
-            font-size: 1.15rem;
-            color: var(--dark);
+            font-size: 1.2rem;
+            color: #fff;
+            font-family: monospace;
         }
 
         .report-graphics-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 20px;
+            gap: 25px;
             margin-top: 25px;
         }
 
@@ -321,50 +340,52 @@
         }
 
         .graphic-card {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 24px;
         }
 
         .graphic-card h4 {
-            color: var(--primary);
-            font-size: 1rem;
-            margin-bottom: 12px;
+            color: var(--neon-blue);
+            font-size: 1.05rem;
+            margin-bottom: 18px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .live-chart-wrapper {
             width: 100%;
-            height: 260px;
+            height: 280px;
             position: relative;
         }
 
         .dynamic-ecg-box {
-            background: var(--graph-bg);
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 20px;
+            background: #060913;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            box-shadow: inset 0 0 20px rgba(0, 255, 204, 0.05);
         }
 
         .dynamic-ecg-box .panel-tag {
-            color: #38bdf8;
-            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .table-responsive {
             width: 100%;
             overflow-x: auto;
-            margin-top: 15px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
         }
 
         table {
@@ -375,76 +396,89 @@
         }
 
         th {
-            background-color: var(--primary);
-            color: white;
-            padding: 12px 10px;
+            background-color: rgba(5, 217, 232, 0.1);
+            color: var(--neon-blue);
+            padding: 14px 12px;
             white-space: nowrap;
-            font-weight: 600;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(5, 217, 232, 0.2);
         }
 
         td {
-            padding: 10px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             white-space: nowrap;
+            color: #cbd5e1;
         }
 
-        tr:nth-child(even) { background-color: #f8fafc; }
-        tr:hover { background-color: #f1f5f9; }
+        tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.01); }
+        tr:hover { background-color: rgba(0, 255, 204, 0.04); }
 
         .hardware-box {
-            background: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-            font-size: 0.9rem;
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: var(--neon-yellow);
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 25px;
+            font-size: 0.95rem;
         }
 
         .lit-card {
-            background: #f8fafc;
-            border-left: 4px solid var(--primary);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 0 6px 6px 0;
+            background: rgba(255, 255, 255, 0.01);
+            border-left: 4px solid var(--neon-cyan);
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 0 10px 10px 0;
+            border-top: 1px solid rgba(255,255,255,0.02);
+            border-right: 1px solid rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.02);
         }
 
-        .lit-title { font-weight: 700; color: #1e293b; font-size: 0.95rem; }
-        .lit-meta { font-size: 0.8rem; color: #64748b; margin: 4px 0 8px 0; }
-        .lit-desc { font-size: 0.9rem; color: #334155; }
+        .lit-title { font-weight: 700; color: #fff; font-size: 1rem; }
+        .lit-meta { font-size: 0.8rem; color: var(--text-muted); margin: 6px 0 10px 0; }
+        .lit-desc { font-size: 0.9rem; color: #cbd5e1; }
 
         .sidebar-panel {
-            background: #1e293b;
-            color: #f1f5f9;
-            padding: 25px;
-            border-radius: 8px;
+            background: var(--panel-bg);
+            color: var(--text-light);
+            padding: 30px;
+            border-radius: 16px;
             height: fit-content;
+            border: 1px solid var(--panel-border);
         }
 
         .sidebar-panel h3 {
-            color: #fca5a5;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
+            color: var(--neon-blue);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .sidebar-panel p {
-            font-size: 0.9rem;
-            margin-bottom: 15px;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
             color: #cbd5e1;
         }
 
         footer {
-            background: var(--dark);
-            color: #94a3b8;
+            background: #070a12;
+            color: var(--text-muted);
             text-align: center;
-            padding: 35px 20px;
-            margin-top: 50px;
+            padding: 40px 20px;
+            margin-top: 60px;
             font-size: 0.9rem;
-            border-top: 4px solid var(--secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-blue); }
     </style>
 </head>
 <body>
@@ -463,7 +497,7 @@
             <div class="author-card">
                 <h4>Undergraduate Research Team</h4>
                 <p>Ramesh Kumar K, Syed Ameen, Sandhya S</p>
-                <p style="color: #93c5fd; font-size: 0.85rem; margin-top:4px;">Department of Medical Electronics Engineering</p>
+                <p style="color: var(--neon-blue); font-size: 0.85rem; margin-top:4px;">Department of Medical Electronics Engineering</p>
             </div>
             <div class="author-card">
                 <h4>Institutional Affiliation</h4>
@@ -490,7 +524,7 @@
 
                 <section id="report-figures">
                     <h2>Live Analytical Visualizations & Trends</h2>
-                    <p style="font-size:0.95rem; color:#475569; margin-bottom:15px;">
+                    <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:20px;">
                         Dynamic comparative population monitors compiled directly from verified metrics within the master experimental cohort data.
                     </p>
                     
@@ -513,7 +547,7 @@
 
                 <section id="interactive-dashboard">
                     <h2>Subject Analytical Panel (Real Patient Values)</h2>
-                    <p style="margin-bottom: 15px; font-size:0.95rem; color:#475569;">
+                    <p style="margin-bottom: 20px; font-size:0.95rem; color:var(--text-muted);">
                         Click on any subject below to cleanly isolate and monitor their precise biological features and raw cognitive assessment data.
                     </p>
                     
@@ -523,17 +557,23 @@
                         <div class="analysis-display-panel" id="analysis-panel">
                             <div class="panel-header-row">
                                 <div class="title-block">
-                                    <h3 id="panel-subject-title" style="margin-bottom:5px;">Select Subject Profile</h3>
-                                    <div id="panel-subject-subtitle" style="font-size:0.85rem; color:#64748b; font-weight:600; text-transform:uppercase;"></div>
+                                    <h3 id="panel-subject-title" style="margin-bottom:5px; color: #fff;">Select Subject Profile</h3>
+                                    <div id="panel-subject-subtitle" style="font-size:0.85rem; color:var(--neon-blue); font-weight:600; text-transform:uppercase;"></div>
                                 </div>
+                                
+                                <!-- 3D Generated Anatomical Heart Container (References canvas_2.png layout structure) -->
                                 <div class="heart-visualization-box">
-                                    <svg class="live-pumping-heart" id="cardiac-heart-element" viewBox="0 0 24 24">
-                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5w-3.4 3.78L12 21.35z"/>
-                                    </svg>
-                                    <div class="heart-bpm-counter"><span id="heart-bpm-numeric">0</span> BPM</div>
+                                    <div class="heart-canvas-container">
+                                        <canvas id="animatedHeart3D" width="110" height="110"></canvas>
+                                    </div>
+                                    <div class="heart-text-metrics">
+                                        <div class="heart-bpm-counter" id="heart-bpm-numeric">0</div>
+                                        <div class="heart-bpm-label">BPM Real</div>
+                                    </div>
                                 </div>
+                                
                             </div>
-                            <hr style="border: 0; border-top: 1px solid #e2e8f0;">
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
                             
                             <div class="metric-grid">
                                 <div class="metric-card"><span>Demographics</span><strong id="m-demographics">-</strong></div>
@@ -552,10 +592,10 @@
 
                             <div class="dynamic-ecg-box">
                                 <span class="panel-tag">Live Microcontroller ECG Pulse Simulation</span>
-                                <div style="height: 70px; background: #000; padding: 5px; border-radius: 4px;">
+                                <div style="height: 100px; background: #040712; padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05)">
                                     <canvas id="liveEcgCanvas" style="width:100%; height:100%;"></canvas>
                                 </div>
-                                <div id="wave-caption" style="color:#cbd5e1; font-size:0.75rem; margin-top:5px; font-style:italic;"></div>
+                                <div id="wave-caption" style="color:var(--text-muted); font-size:0.8rem; margin-top:8px; font-style:italic;"></div>
                             </div>
 
                             <div class="hardware-box">
@@ -567,7 +607,7 @@
 
                 <section id="complete-dataset">
                     <h2>Master Experimental Matrix (All 18 Original Subjects)</h2>
-                    <p style="font-size: 0.9rem; color:#475569; margin-bottom: 12px;">Complete integrated table representing verified, raw biometric entries from your experimental population.</p>
+                    <p style="font-size: 0.9rem; color:var(--text-muted); margin-bottom: 15px;">Complete integrated table representing verified, raw biometric entries from your experimental population.</p>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -610,7 +650,7 @@
                 <p><strong>Cardiac Capacity:</strong> The human heart loops roughly 6,000 to 7,500 liters of blood per day.</p>
                 <p><strong>Heart Mass Variation:</strong> Adult male organs scale near 280-340g; adult female profiles scale between 230-280g.</p>
                 
-                <h3 style="margin-top: 25px; color:#a7f3d0;">Cognitive Metrics</h3>
+                <h3 style="margin-top: 35px; color: var(--neon-magenta)">Cognitive Metrics</h3>
                 <p><strong>MMSE & MoCA:</strong> Validated tracking criteria designed to test short-term working recall, orientation, language processing, and general executive function levels up to a 30-mark maximum.</p>
                 <p><strong>MNA Scoring:</strong> Used alongside physical mass ratios to evaluate standard baseline nutritional and structural wellness levels across aging populations.</p>
             </div>
@@ -620,12 +660,12 @@
 
     <footer>
         <p>Department of Medical Electronics Engineering — Ramaiah Institute of Technology, Bangalore</p>
-        <p style="font-size: 0.8rem; margin-top: 5px; color: #64748b;">Senior Project Portal View • Verified Clinical Real-Value Dataset Engine</p>
+        <p style="font-size: 0.8rem; margin-top: 5px; color: #475569;">Senior Project Portal View • Verified Clinical Real-Value Dataset Engine</p>
         <p>Designed By Rameshkumar K</p>
     </footer>
 
     <script>
-        // Synchronized complete population dataset (18 subjects)
+        // Data Matrix Array
         const subjectData = [
             {id: 1, sex: "F", age: 60, ht: "5 ft", wt: 64.35, spo2: 97, sbp: 112, dbp: 73, pulse: 85, hScore: 65.5, whoqol: "75.3%", temp: "normal", diet: "Veg", bmi: 27.9, hrv: 61, lf: 241, hf: 132, rmsv: 0.98, snr: 43.2096, psnr: 29.9074, mmse: 22, moca: 23, mna: 11, edu: "Bsc"},
             {id: 2, sex: "F", age: 76, ht: "5.2ft", wt: 81.1, spo2: 97, sbp: 201, dbp: 90, pulse: 62, hScore: 64.8, whoqol: "74.8%", temp: "normal", diet: "Veg", bmi: 25.6, hrv: 64, lf: 189, hf: 161, rmsv: 0.39, snr: 46.8798, psnr: 33.7656, mmse: 23.5, moca: 23.5, mna: 11, edu: "12th"},
@@ -647,12 +687,10 @@
             {id: 18, sex: "M", age: 58, ht: "5.3ft", wt: 67, spo2: 96, sbp: 142, dbp: 88, pulse: 74, hScore: 71.0, whoqol: "73%", temp: "normal", diet: "N-Veg", bmi: 26.2, hrv: 67, lf: 150, hf: 90, rmsv: 0.88, snr: 42.1500, psnr: 31.2000, mmse: 20, moca: 18, mna: 12, edu: "12th"}
         ];
 
-        // Render full table elements
         const tableBody = document.getElementById("table-body-target");
         const selectorContainer = document.getElementById("selector-container");
 
         subjectData.forEach((sub, index) => {
-            // Build Table View
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td><strong>Sub(${sub.id})</strong></td><td>${sub.sex}</td><td>${sub.age}</td><td>${sub.ht}</td>
@@ -664,7 +702,6 @@
             `;
             tableBody.appendChild(row);
 
-            // Build Left-Sided Button selectors
             const btn = document.createElement("button");
             btn.className = `subject-btn ${index === 0 ? 'active' : ''}`;
             btn.onclick = () => activateSubject(sub.id, btn);
@@ -672,7 +709,8 @@
             selectorContainer.appendChild(btn);
         });
 
-        // Interactive Isolated Monitor Updates
+        let currentPulseInterval = 85;
+
         function activateSubject(id, clickedElement) {
             document.querySelectorAll(".subject-btn").forEach(b => b.classList.remove("active"));
             if(clickedElement) clickedElement.classList.add("active");
@@ -683,41 +721,104 @@
             document.getElementById("panel-subject-title").innerText = `Subject Profile Matrix (${patient.id})`;
             document.getElementById("panel-subject-subtitle").innerText = `Clinical Target Validation Track • Sex: ${patient.sex}`;
 
-            document.getElementById("m-demographics").innerText = `${patient.age} Yrs Old / ${patient.sex} Format`;
+            document.getElementById("m-demographics").innerText = `${patient.age} Yrs Old / ${patient.sex}`;
             document.getElementById("m-bmi").innerText = `${patient.bmi} kg/m²`;
             document.getElementById("m-bp").innerText = `${patient.sbp} / ${patient.dbp} mmHg`;
-            document.getElementById("m-pulse-spo2").innerText = `${patient.pulse} BPM / ${patient.spo2}% SpO2`;
+            document.getElementById("m-pulse-spo2").innerText = `${patient.pulse} BPM / ${patient.spo2}%`;
             document.getElementById("m-whoqol").innerText = patient.whoqol;
-            document.getElementById("m-health-temp").innerText = `${patient.hScore} Index / ${patient.temp}`;
+            document.getElementById("m-health-temp").innerText = `${patient.hScore} / ${patient.temp}`;
             document.getElementById("m-hrv").innerText = `${patient.hrv} ms`;
-            document.getElementById("m-lf-hf").innerText = `${patient.lf} Hz / ${patient.hf} Hz`;
-            document.getElementById("m-snr-psnr").innerText = `${patient.snr.toFixed(1)} dB / ${patient.psnr.toFixed(1)} dB`;
+            document.getElementById("m-lf-hf").innerText = `${patient.lf} / ${patient.hf} Hz`;
+            document.getElementById("m-snr-psnr").innerText = `${patient.snr.toFixed(1)} / ${patient.psnr.toFixed(1)} dB`;
             document.getElementById("m-cognitive").innerText = `MMSE: ${patient.mmse} | MoCA: ${patient.moca}`;
-            document.getElementById("m-mna").innerText = `${patient.mna} Assessment Points`;
-            document.getElementById("m-bg-details").innerText = `${patient.diet} / Edu Base: ${patient.edu}`;
+            document.getElementById("m-mna").innerText = `${patient.mna} Points`;
+            document.getElementById("m-bg-details").innerText = `${patient.diet} / ${patient.edu}`;
 
             document.getElementById("wave-caption").innerText = `Displaying real-time simulated cardiac cycle calculated at an active ${patient.pulse} BPM output frequency threshold.`;
             
-            // DYNAMIC HEART ANIMATION STEP
-            // Calculate duration of one complete cardiac loop based on actual patient BPM
-            const beatDurationInSeconds = 60 / patient.pulse;
-            const heartSVG = document.getElementById("cardiac-heart-element");
-            const heartText = document.getElementById("heart-bpm-numeric");
-            
-            // Dynamically alter text content and CSS shorthand rules instantly
-            heartText.innerText = patient.pulse;
-            heartSVG.style.animationDuration = `${beatDurationInSeconds}s`;
-
-            // Speed up or slow down simulated waveform trace based on actual recorded pulse rate
-            currentPulseInterval = Math.max(30, Math.min(120, patient.pulse));
+            document.getElementById("heart-bpm-numeric").innerText = patient.pulse;
+            currentPulseInterval = patient.pulse;
         }
 
-        // Live Canvas Microcontroller ECG Wave Rendering Logic
+        // --- REAL ANATOMICAL VECTOR HEART CANVAS GENERATOR (Anatomy reference: canvas_2.png) ---
+        const heartCanvas = document.getElementById("animatedHeart3D");
+        const hctx = heartCanvas.getContext("2d");
+        let pulseTimer = 0;
+
+        function drawAnatomicalHeart() {
+            hctx.clearRect(0, 0, 110, 110);
+            
+            // Speed factor tied dynamically to the current selected patient's biological pulse rate
+            let speedFactor = (currentPulseInterval / 60) * 0.06;
+            pulseTimer += speedFactor;
+
+            // Biological expansion phase variables (Systolic / Diastolic contract cycles)
+            let squeeze = 1 + Math.sin(pulseTimer) * 0.08;
+            let stretch = 1 - Math.sin(pulseTimer) * 0.04;
+
+            hctx.save();
+            hctx.translate(55, 60);
+            hctx.scale(squeeze, stretch);
+
+            // 1. Draw Superior & Inferior Vena Cava Pipelines (Blue Side - Left on diagram canvas_2.png)
+            hctx.fillStyle = "#2563eb"; 
+            hctx.fillRect(-28, -48, 10, 30); // Superior
+            hctx.fillRect(-24, 10, 8, 25);  // Inferior
+
+            // 2. Draw Aorta Arch Channel (Red Main Top Pipe)
+            hctx.fillStyle = "#dc2626";
+            hctx.beginPath();
+            hctx.arc(4, -38, 12, Math.PI, 0, false);
+            hctx.lineWidth = 9;
+            hctx.strokeStyle = "#dc2626";
+            hctx.stroke();
+            // Aortic branches (Three branching pipelines pointing to upper body)
+            hctx.fillRect(-4, -52, 5, 10);
+            hctx.fillRect(4, -54, 5, 10);
+            hctx.fillRect(12, -51, 5, 10);
+
+            // 3. Pulmonary Artery Array (Blue crossover bridge)
+            hctx.fillStyle = "#1d4ed8";
+            hctx.beginPath();
+            hctx.moveTo(-15, -24);
+            hctx.lineTo(-5, -42);
+            hctx.lineTo(8, -32);
+            hctx.fill();
+
+            // 4. Main Organic Muscle Walls (Right and Left Ventricles / Atrium Chambers)
+            // Left heart side tissue (Anatomical Right - Shaded Blue-Crimson)
+            hctx.fillStyle = "#991b1b";
+            hctx.beginPath();
+            hctx.moveTo(-25, -20);
+            hctx.bezierCurveTo(-42, -20, -42, 15, -15, 32);
+            hctx.lineTo(0, 42); // Lower Apex point
+            hctx.lineTo(0, -15);
+            hctx.fill();
+
+            // Right heart side tissue (Anatomical Left Thick Muscle Wall - Deep Red/Pink)
+            hctx.fillStyle = "#b91c1c";
+            hctx.beginPath();
+            hctx.moveTo(25, -20);
+            hctx.bezierCurveTo(42, -20, 42, 18, 15, 34);
+            hctx.lineTo(0, 42); // Joins at lower apex base
+            hctx.lineTo(0, -15);
+            hctx.fill();
+
+            // 5. Light Outer Highlights & Shading Layers for real 3D Depth
+            hctx.strokeStyle = "rgba(255,255,255,0.2)";
+            hctx.lineWidth = 2;
+            hctx.beginPath();
+            hctx.arc(18, -2, 15, 0, Math.PI*2);
+            hctx.stroke();
+
+            hctx.restore();
+            requestAnimationFrame(drawAnatomicalHeart);
+        }
+
+        // --- MICROCONTROLLER ECG LIVE VECTOR SIMULATION ---
         const canvas = document.getElementById("liveEcgCanvas");
         const ctx = canvas.getContext("2d");
-        let animationId;
         let x = 0;
-        let currentPulseInterval = 85;
 
         function resizeCanvas() {
             canvas.width = canvas.parentElement.clientWidth;
@@ -733,74 +834,91 @@
             }
 
             if (x === 0) {
-                ctx.strokeStyle = "#1e293b";
-                ctx.lineWidth = 0.5;
-                for(let i=0; i<canvas.height; i+=15) {
+                ctx.strokeStyle = "rgba(0, 255, 204, 0.03)";
+                ctx.lineWidth = 1;
+                for(let i=0; i<canvas.height; i+=20) {
                     ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
                 }
             }
 
-            // Generate synthetic real-time micro-beats
             let baseLine = canvas.height / 2;
-            let cyclePosition = x % Math.floor(6000 / currentPulseInterval);
+            let cyclePosition = x % Math.floor(6500 / currentPulseInterval);
             let y = baseLine;
 
+            // Microcontroller Analog Pin Stream Mapping (P, Q, R, S, T Waves)
             if (cyclePosition > 10 && cyclePosition <= 18) {
-                y -= 4; // P-Wave Segment
+                y -= 6; 
             } else if (cyclePosition === 24) {
-                y += 6; // Q Downward Dip
+                y += 8; 
             } else if (cyclePosition === 26) {
-                y -= baseLine * 0.75; // R spike peak
+                y -= baseLine * 0.75; 
             } else if (cyclePosition === 28) {
-                y += baseLine * 0.4; // S Dip
-            } else if (cyclePosition > 38 && cyclePosition <= 50) {
-                y -= 8; // T-Wave Ventricular Repolarization
+                y += baseLine * 0.4; 
+            } else if (cyclePosition > 38 && cyclePosition <= 52) {
+                y -= 12; 
             }
 
-            ctx.strokeStyle = "#10b981";
-            ctx.lineWidth = 2.5;
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = "#10b981";
+            ctx.strokeStyle = "#00ffcc";
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = "#00ffcc";
             
             ctx.beginPath();
             ctx.moveTo(x, y);
-            x += 1.8;
+            x += 2;
             ctx.lineTo(x, y);
             ctx.stroke();
 
-            ctx.shadowBlur = 0; // reset
-            animationId = requestAnimationFrame(drawEcgLine);
+            ctx.shadowBlur = 0; 
+            requestAnimationFrame(drawEcgLine);
         }
 
-        // Initialize background population analytics dashboard charts using standard layouts
+        // --- BACKGROUND CHART CONTROLLERS ---
         window.addEventListener('DOMContentLoaded', () => {
             activateSubject(1, null);
             drawEcgLine();
+            drawAnatomicalHeart();
 
-            // SBP vs DBP Group Layout
+            // Dark Mode Bar Configuration
             new Chart(document.getElementById('populationBpChart').getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: subjectData.map(s => `Sub ${s.id}`),
                     datasets: [
-                        { label: 'Systolic Blood Pressure (mmHg)', data: subjectData.map(s => s.sbp), backgroundColor: '#3b82f6' },
-                        { label: 'Diastolic Blood Pressure (mmHg)', data: subjectData.map(s => s.dbp), backgroundColor: '#0d9488' }
+                        { label: 'Systolic Pressure (mmHg)', data: subjectData.map(s => s.sbp), backgroundColor: '#ff2a6d' },
+                        { label: 'Diastolic Pressure (mmHg)', data: subjectData.map(s => s.dbp), backgroundColor: '#05d9e8' }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false, min: 50 } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: { 
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { beginAtZero: false, min: 50, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
             });
 
-            // Cognitive Tracker Chart
+            // Dark Mode Line Configuration
             new Chart(document.getElementById('populationCognitiveChart').getContext('2d'), {
                 type: 'line',
                 data: {
                     labels: subjectData.map(s => `Sub ${s.id}`),
                     datasets: [
-                        { label: 'MMSE Assessment Score', data: subjectData.map(s => s.mmse), borderColor: '#ef4444', tension: 0.25, fill: false },
-                        { label: 'MoCA Assessment Score', data: subjectData.map(s => s.moca), borderColor: '#f59e0b', tension: 0.25, fill: false }
+                        { label: 'MMSE Index', data: subjectData.map(s => s.mmse), borderColor: '#00ffcc', tension: 0.2, fill: false },
+                        { label: 'MoCA Index', data: subjectData.map(s => s.moca), borderColor: '#f59e0b', tension: 0.2, fill: false }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 30, min: 0 } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: { 
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { max: 30, min: 0, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
             });
         });
     </script>
