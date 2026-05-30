@@ -14,6 +14,8 @@ The proposed system aims to provide a comprehensive health-monitoring framework 
 ### Key Areas
 
 * ECG Monitoring
+* HealthyPi-Based Health Monitoring
+* MSP430 Microcontroller
 * Wearable Health Sensors
 * Heart Rate Monitoring
 * Mental Health Assessment
@@ -23,6 +25,9 @@ The proposed system aims to provide a comprehensive health-monitoring framework 
 * Healthy Aging
 * Physiological Signal Analysis
 * Indian Geriatric Population
+* Short Technical Description
+
+This project uses HealthyPi and the MSP430 microcontroller to monitor the physiological and mental health of elderly Indians. Physiological parameters such as ECG and heart rate are collected through wearable sensors and analyzed for early health-risk detection. The system supports remote monitoring, preventive healthcare, and improved quality of life for the aging population.
 
 ### Objective
 
