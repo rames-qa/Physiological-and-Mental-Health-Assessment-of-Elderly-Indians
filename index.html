@@ -176,7 +176,7 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1.6fr;
+            grid-template-columns: 1fr 1.8fr;
             gap: 30px;
             margin-top: 15px;
         }
@@ -189,7 +189,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             padding: 15px;
-            max-height: 720px;
+            max-height: 780px;
             overflow-y: auto;
             background: rgba(0, 0, 0, 0.2);
         }
@@ -290,7 +290,7 @@
 
         .metric-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             margin-top: 25px;
         }
@@ -590,7 +590,7 @@
                             <div class="dynamic-ecg-box">
                                 <span class="panel-tag">Live Microcontroller ECG Pulse Simulation</span>
                                 <div style="height: 100px; background: #040712; padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05)">
-                                    <canvas id="liveEbgCanvas" style="width:100%; height:100%;"></canvas>
+                                    <canvas id="liveEbgCanvas"></canvas>
                                 </div>
                                 <div id="wave-caption" style="color:var(--text-muted); font-size:0.8rem; margin-top:8px; font-style:italic;"></div>
                             </div>
@@ -688,214 +688,210 @@
             if (patient.sbp >= 160 || patient.dbp >= 100) return { label: "Stage 2 Hypertension", color: "#ff2a6d" };
             if (patient.sbp >= 140 || patient.dbp >= 90) return { label: "Stage 1 Hypertension", color: "#f59e0b" };
             if (patient.sbp >= 120 || patient.dbp >= 80) return { label: "Prehypertension", color: "#05d9e8" };
-            return { label: "Normal Vasculature", color: "#00ffcc" };
+            return { label: "Normal Range", color: "#00ffcc" };
         }
 
-        // Initialize Master Matrix Table View
-        const tableBody = document.getElementById("table-body-target");
-        subjectData.forEach(p => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td><strong>Sub-${p.id}</strong></td><td>${p.sex}</td><td>${p.age}</td>
-                <td>${p.ht}</td><td>${p.wt}kg</td><td>${p.spo2}%</td>
-                <td>${p.sbp}</td><td>${p.dbp}</td><td>${p.pulse}</td>
-                <td>${p.hScore}</td><td>${p.whoqol}</td><td>${p.temp}</td>
-                <td>${p.diet}</td><td>${p.bmi}</td><td>${p.hrv}ms</td>
-                <td>${p.lf}</td><td>${p.hf}</td><td>${p.rmsv}</td>
-                <td>${p.snr.toFixed(1)}</td><td>${p.psnr.toFixed(1)}</td>
-                <td>${p.mmse}</td><td>${p.moca}</td><td>${p.mna}</td><td>${p.edu}</td>
-            `;
-            tableBody.appendChild(tr);
-        });
-
-        // Initialize Left Panel Selector Buttons
-        const selectorContainer = document.getElementById("selector-container");
-        subjectData.forEach(p => {
-            const btn = document.createElement("button");
-            btn.className = `subject-btn ${p.id === 1 ? 'active' : ''}`;
-            btn.innerHTML = `<span>Subject Profile #${p.id} (${p.sex}/${p.age})</span> <span class="badge">BP ${p.sbp}/${p.dbp}</span>`;
-            btn.onclick = () => selectSubject(p.id, btn);
-            selectorContainer.appendChild(btn);
-        });
-
-        // Live ECG Simulator Engine
-        const ecgCanvas = document.getElementById("liveEbgCanvas");
-        const ecgCtx = ecgCanvas.getContext("2d");
+        // Live Microcontroller ECG Canvas Simulator Engine
+        const ecgCanvas = document.getElementById('liveEbgCanvas');
+        const ecgCtx = ecgCanvas.getContext('2d');
         let ecgX = 0;
-        let activeBpm = 85;
-        let ecgAnimationId;
+        let ecgPoints = [];
+        let ecgTick = 0;
+        let currentBpmSpeed = 70;
 
-        function drawEcg() {
-            const width = ecgCanvas.width = ecgCanvas.parentElement.clientWidth;
-            const height = ecgCanvas.height = 100;
-            
-            // Draw clean clear persistance screen sweep path
-            ecgCtx.fillStyle = "rgba(4, 7, 18, 0.05)";
-            ecgCtx.fillRect(ecgX, 0, 20, height);
+        function resizeEcgCanvas() {
+            ecgCanvas.width = ecgCanvas.parentElement.clientWidth;
+            ecgCanvas.height = 100;
+        }
+        window.addEventListener('resize', resizeEcgCanvas);
+        resizeEcgCanvas();
 
-            // Computational base wave equations mimicking typical Lead-II complexes
-            let baseIndex = (ecgX % Math.floor(60000 / activeBpm));
-            let y = height / 2;
+        function getEcgYValue(tick) {
+            let cycle = tick % 80;
+            let base = ecgCanvas.height / 2;
+            if (cycle > 5 && cycle < 10) return base - Math.sin((cycle - 5) * Math.PI / 5) * 5; // P Wave
+            if (cycle === 15) return base + 8; // Q dip
+            if (cycle > 15 && cycle < 19) return base - 35; // R spike
+            if (cycle === 19) return base + 12; // S dip
+            if (cycle > 25 && cycle < 35) return base - Math.sin((cycle - 25) * Math.PI / 10) * 10; // T wave
+            return base;
+        }
 
-            if (baseIndex > 10 && baseIndex < 25) {
-                // P Wave configuration
-                y -= Math.sin((baseIndex - 10) * Math.PI / 15) * 6;
-            } else if (baseIndex >= 30 && baseIndex < 34) {
-                // Q Deflection
-                y += (baseIndex - 30) * 4;
-            } else if (baseIndex >= 34 && baseIndex < 40) {
-                // R Peak Ascent
-                y -= (baseIndex - 34) * 12;
-            } else if (baseIndex >= 40 && baseIndex < 46) {
-                // S Deflection Dip
-                y += (baseIndex - 40) * 14 - 40;
-            } else if (baseIndex >= 55 && baseIndex < 75) {
-                // T Wave repolarization matrix
-                y -= Math.sin((baseIndex - 55) * Math.PI / 20) * 10;
+        function drawEcgLoop() {
+            ecgCtx.fillStyle = '#040712';
+            ecgCtx.fillRect(0, 0, ecgCanvas.width, ecgCanvas.height);
+
+            // Background Grid Lines
+            ecgCtx.strokeStyle = '#0f172a';
+            ecgCtx.lineWidth = 0.5;
+            for (let i = 0; i < ecgCanvas.width; i += 20) {
+                ecgCtx.beginPath(); ecgCtx.moveTo(i, 0); ecgCtx.lineTo(i, ecgCanvas.height); ecgCtx.stroke();
+            }
+            for (let i = 0; i < ecgCanvas.height; i += 20) {
+                ecgCtx.beginPath(); ecgCtx.moveTo(0, i); ecgCtx.lineTo(ecgCanvas.width, i); ecgCtx.stroke();
             }
 
-            ecgCtx.strokeStyle = "#00ffcc";
+            let nextY = getEcgYValue(ecgTick);
+            ecgPoints.push(nextY);
+            if (ecgPoints.length > ecgCanvas.width) ecgPoints.shift();
+
+            ecgCtx.strokeStyle = '#00ffcc';
             ecgCtx.lineWidth = 2;
-            ecgCtx.shadowBlur = 4;
-            ecgCtx.shadowColor = "#00ffcc";
-            
             ecgCtx.beginPath();
-            ecgCtx.moveTo(ecgX, y);
-            ecgCtx.lineTo(ecgX + 1, y);
+            for (let i = 0; i < ecgPoints.length; i++) {
+                if (i === 0) ecgCtx.moveTo(i, ecgPoints[i]);
+                else ecgCtx.lineTo(i, ecgPoints[i]);
+            }
             ecgCtx.stroke();
 
-            ecgX = (ecgX + 2) % width;
-            ecgAnimationId = requestAnimationFrame(drawEcg);
+            // Frequency calculation adjustments according to current active telemetry speed
+            ecgTick += (currentBpmSpeed / 60) * 1.2;
+            requestAnimationFrame(drawEcgLoop);
         }
 
-        // 3D Matrix Structural Core Heart Pulsing Visualization Model Engine
-        const heartCanvas = document.getElementById("animatedHeart3D");
-        const heartCtx = heartCanvas.getContext("2d");
-        let heartScalePhase = 0;
+        // Animated Heart Widget Engine
+        const heartCanvas = document.getElementById('animatedHeart3D');
+        const heartCtx = heartCanvas.getContext('2d');
+        let heartScale = 1;
+        let heartGrowing = true;
 
-        function drawAnimatedHeart() {
+        function drawHeartWidget() {
             heartCtx.clearRect(0, 0, 110, 110);
-            heartScalePhase += (activeBpm / 3600);
             
-            // Calculate scale multiplier driven linearly by isolated biological pulse values
-            let scaleFactor = 1.0 + Math.sin(heartScalePhase * Math.PI * 2) * 0.08;
-            if (Math.sin(heartScalePhase * Math.PI * 2) < 0) scaleFactor = 1.0; // Sharp systolic twitch modeling
+            let targetScale = (currentBpmSpeed / 70);
+            if (heartGrowing) {
+                heartScale += 0.01 * targetScale;
+                if (heartScale >= 1.1) heartGrowing = false;
+            } else {
+                heartScale -= 0.01 * targetScale;
+                if (heartScale <= 0.9) heartGrowing = true;
+            }
 
             heartCtx.save();
-            heartCtx.translate(55, 50);
-            heartCtx.scale(scaleFactor, scaleFactor);
-
-            // Multi-pass vector pathing to draw glowing wireframe heart symbol representation
+            heartCtx.translate(55, 55);
+            heartCtx.scale(heartScale, heartScale);
+            
+            heartCtx.shadowBlur = 15;
+            heartCtx.shadowColor = '#ff2a6d';
+            heartCtx.fillStyle = '#ff2a6d';
+            
             heartCtx.beginPath();
-            heartCtx.moveTo(0, -15);
-            heartCtx.bezierCurveTo(-25, -35, -45, -10, -45, 15);
-            heartCtx.bezierCurveTo(-45, 35, -20, 50, 0, 65);
-            heartCtx.bezierCurveTo(20, 50, 45, 35, 45, 15);
-            heartCtx.bezierCurveTo(45, -10, 25, -35, 0, -15);
-            heartCtx.closePath();
-
-            heartCtx.fillStyle = "rgba(255, 42, 109, 0.15)";
+            heartCtx.moveTo(0, -10);
+            heartCtx.bezierCurveTo(-15, -30, -35, -30, -35, -5);
+            heartCtx.bezierCurveTo(-35, 15, -15, 30, 0, 45);
+            heartCtx.bezierCurveTo(15, 30, 35, 15, 35, -5);
+            heartCtx.bezierCurveTo(35, -30, 15, -30, 0, -10);
             heartCtx.fill();
-            heartCtx.strokeStyle = "#ff2a6d";
-            heartCtx.lineWidth = 3;
-            heartCtx.shadowBlur = 10;
-            heartCtx.shadowColor = "#ff2a6d";
-            heartCtx.stroke();
             heartCtx.restore();
 
-            requestAnimationFrame(drawAnimatedHeart);
+            setTimeout(drawHeartWidget, 1000 / 60);
         }
 
-        // Isolate & Inject Live Patient Profile Fields
+        // Update UI Panel Elements with Complete Structural Logic
         function selectSubject(id) {
-            // Adjust left list active UI states cleanly
-            document.querySelectorAll(".subject-btn").forEach(b => b.classList.remove("active"));
-            event.currentTarget.classList.add("active");
+            const subject = subjectData.find(s => s.id === id);
+            if (!subject) return;
 
-            const p = subjectData.find(item => item.id === id);
-            if (!p) return;
+            document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-sub-${id}`).classList.add('active');
 
-            activeBpm = p.pulse;
-            const status = getHealthStatus(p);
+            const status = getHealthStatus(subject);
+            currentBpmSpeed = subject.pulse;
 
-            // Push structural text data into corresponding target UI tags
-            document.getElementById("panel-subject-title").innerText = `Subject Profile Check: #0${p.id}`;
-            document.getElementById("panel-subject-subtitle").innerHTML = `<span style="color:${status.color}">${status.label}</span>`;
-            document.getElementById("heart-bpm-numeric").innerText = p.pulse;
-            
-            document.getElementById("m-demographics").innerText = `${p.sex} / Age ${p.age} / ${p.edu}`;
-            document.getElementById("m-bmi").innerText = `${p.bmi} (Wt: ${p.wt}kg / Ht: ${p.ht})`;
-            document.getElementById("m-bp").innerText = `${p.sbp} / ${p.dbp} mmHg`;
-            document.getElementById("m-pulse-spo2").innerText = `${p.pulse} BPM / ${p.spo2}% SpO2`;
-            document.getElementById("m-whoqol").innerText = p.whoqol;
-            document.getElementById("m-health-temp").innerText = `${p.hScore} Sc / ${p.temp}`;
-            document.getElementById("m-hrv").innerText = `${p.hrv} ms (RMSV: ${p.rmsv})`;
-            document.getElementById("m-lf-hf").innerText = `${p.lf} Hz / ${p.hf} Hz`;
-            document.getElementById("m-snr-psnr").innerText = `${p.snr.toFixed(2)}dB / ${p.psnr.toFixed(2)}dB`;
-            document.getElementById("m-cognitive").innerText = `MMSE: ${p.mmse} / MoCA: ${p.moca}`;
-            document.getElementById("m-mna").innerText = `${p.mna} Assessment Mark`;
-            document.getElementById("m-bg-details").innerText = `Dietary: ${p.diet}`;
-            document.getElementById("wave-caption").innerText = `Display showing computed signal wave pattern mapping for Subject #${p.id} running at a standard resting pulse rate of ${p.pulse} beats per minute.`;
+            document.getElementById('panel-subject-title').innerText = `Subject Profile #${String(id).padStart(3, '0')}`;
+            document.getElementById('panel-subject-subtitle').innerHTML = `<span style="color:${status.color}">${status.label}</span>`;
+            document.getElementById('heart-bpm-numeric').innerText = subject.pulse;
+
+            document.getElementById('m-demographics').innerText = `${subject.sex} / ${subject.age} yrs`;
+            document.getElementById('m-bmi').innerText = `${subject.bmi} (${subject.wt} kg / ${subject.ht})`;
+            document.getElementById('m-bp').innerText = `${subject.sbp} / ${subject.dbp} mmHg`;
+            document.getElementById('m-pulse-spo2').innerText = `${subject.pulse} BPM / ${subject.spo2}% SpO2`;
+            document.getElementById('m-whoqol').innerText = subject.whoqol;
+            document.getElementById('m-health-temp').innerText = `${subject.hScore} / ${subject.temp}`;
+            document.getElementById('m-hrv').innerText = `${subject.hrv} ms`;
+            document.getElementById('m-lf-hf').innerText = `${subject.lf} Hz / ${subject.hf} Hz`;
+            document.getElementById('m-snr-psnr').innerText = `${subject.snr.toFixed(2)} dB / ${subject.psnr.toFixed(2)} dB`;
+            document.getElementById('m-cognitive').innerText = `MMSE: ${subject.mmse} / MoCA: ${subject.moca}`;
+            document.getElementById('m-mna').innerText = `${subject.mna} / 14 max`;
+            document.getElementById('m-bg-details').innerText = `Diet: ${subject.diet} | Education: ${subject.edu}`;
+
+            document.getElementById('wave-caption').innerText = `Telemetry pipeline locking current telemetry sample from Subject ${id} running at ${subject.pulse} cycles per minute.`;
         }
 
-        // Setup Population Metric Trends Using Chart.js
-        function initializeCharts() {
-            const labels = subjectData.map(p => `S${p.id}`);
-            const sbpData = subjectData.map(p => p.sbp);
-            const dbpData = subjectData.map(p => p.dbp);
-            const mmseData = subjectData.map(p => p.mmse);
-            const mocaData = subjectData.map(p => p.moca);
+        // DOM Initializer Entrypoint
+        window.addEventListener('DOMContentLoaded', () => {
+            const selectorContainer = document.getElementById('selector-container');
+            const tableBodyTarget = document.getElementById('table-body-target');
 
-            // Chart Configuration 1: Blood Pressure Trends
-            new Chart(document.getElementById('populationBpChart').getContext('2d'), {
+            subjectData.forEach(sub => {
+                // Populating Sidebar Panel List Rows
+                const btn = document.createElement('button');
+                btn.className = 'subject-btn';
+                btn.id = `btn-sub-${sub.id}`;
+                btn.onclick = () => selectSubject(sub.id);
+                btn.innerHTML = `<span>Subject #${String(sub.id).padStart(3, '0')} (${sub.sex}/${sub.age})</span> <span class="badge">${sub.pulse} BPM</span>`;
+                selectorContainer.appendChild(btn);
+
+                // Populating Master Empirical Matrix Data Entries
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>#${sub.id}</strong></td><td>${sub.sex}</td><td>${sub.age}</td><td>${sub.ht}</td><td>${sub.wt}</td>
+                    <td>${sub.spo2}%</td><td>${sub.sbp}</td><td>${sub.dbp}</td><td>${sub.pulse}</td><td>${sub.hScore}</td>
+                    <td>${sub.whoqol}</td><td>${sub.temp}</td><td>${sub.diet}</td><td>${sub.bmi}</td><td>${sub.hrv}</td>
+                    <td>${sub.lf}</td><td>${sub.hf}</td><td>${sub.rmsv}</td><td>${sub.snr.toFixed(2)}</td><td>${sub.psnr.toFixed(2)}</td>
+                    <td>${sub.mmse}</td><td>${sub.moca}</td><td>${sub.mna}</td><td>${sub.edu}</td>
+                `;
+                tableBodyTarget.appendChild(row);
+            });
+
+            // Initialize Population Analytics Visual Graphs Using Chart.js Engine Matrix
+            const sbpData = subjectData.map(s => s.sbp);
+            const dbpData = subjectData.map(s => s.dbp);
+            const labels = subjectData.map(s => `#${s.id}`);
+
+            new Chart(document.getElementById('populationBpChart'), {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Systolic SBP', data: sbpData, borderColor: '#ff2a6d', backgroundColor: 'rgba(255, 42, 109, 0.1)', borderWidth: 2, tension: 0.2, fill: true },
-                        { label: 'Diastolic DBP', data: dbpData, borderColor: '#05d9e8', backgroundColor: 'rgba(5, 217, 232, 0.05)', borderWidth: 2, tension: 0.2, fill: true }
+                        { label: 'Systolic (SBP)', data: sbpData, borderColor: '#ff2a6d', backgroundColor: 'rgba(255, 42, 109, 0.05)', fill: true, tension: 0.3, borderWidth: 2 },
+                        { label: 'Diastolic (DBP)', data: dbpData, borderColor: '#00ffcc', backgroundColor: 'rgba(0, 255, 204, 0.05)', fill: true, tension: 0.3, borderWidth: 2 }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
                     scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                    },
-                    plugins: { legend: { labels: { color: '#f1f5f9' } } }
+                        x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#94a3b8' } }
+                    }
                 }
             });
 
-            // Chart Configuration 2: Cognitive Matrix Trends
-            new Chart(document.getElementById('populationCognitiveChart').getContext('2d'), {
+            new Chart(document.getElementById('populationCognitiveChart'), {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'MMSE Range', data: mmseData, backgroundColor: '#00ffcc', borderRadius: 4 },
-                        { label: 'MoCA Range', data: mocaData, backgroundColor: '#f59e0b', borderRadius: 4 }
+                        { label: 'MMSE Assessment', data: subjectData.map(s => s.mmse), backgroundColor: 'rgba(5, 217, 232, 0.6)', borderColor: '#05d9e8', borderWidth: 1 },
+                        { label: 'MoCA Assessment', data: subjectData.map(s => s.moca), backgroundColor: 'rgba(245, 158, 11, 0.6)', borderColor: '#f59e0b', borderWidth: 1 }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
                     scales: {
-                        y: { max: 30, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                    },
-                    plugins: { legend: { labels: { color: '#f1f5f9' } } }
+                        x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#94a3b8' }, max: 30 }
+                    }
                 }
             });
-        }
 
-        // Master App Initialization Sequence
-        window.onload = () => {
-            initializeCharts();
+            // Trigger Default Telemetry Views
             selectSubject(1);
-            drawEcg();
-            drawAnimatedHeart();
-        };
+            drawEcgLoop();
+            drawHeartWidget();
+        });
     </script>
 </body>
 </html>
