@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assessment of Physiological & Mental Health of Elderly (Indian Population)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #1e3a8a;
+            --primary-light: #2563eb;
             --secondary: #0d9488;
             --dark: #0f172a;
             --light: #f8fafc;
-            --accent: #b91c1c;
-            --border: #cbd5e1;
-            --graph-bg: #1e293b;
+            --accent: #e11d48;
+            --border: #e2e8f0;
+            --graph-bg: #0f172a;
+            --card-bg: #ffffff;
+            --status-good: #10b981;
+            --status-warn: #f59e0b;
         }
 
         * {
@@ -109,11 +114,12 @@
         }
 
         section {
-            background: white;
+            background: var(--card-bg);
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.06);
             margin-bottom: 30px;
+            border: 1px solid var(--border);
         }
 
         h2 {
@@ -157,15 +163,14 @@
             color: var(--dark);
         }
 
-        /* Interactive Dashboard Panels */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1.2fr;
+            grid-template-columns: 1fr 1.5fr;
             gap: 25px;
             margin-top: 15px;
         }
 
-        @media(max-width: 850px) {
+        @media(max-width: 950px) {
             .dashboard-grid { grid-template-columns: 1fr; }
         }
 
@@ -173,7 +178,7 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             padding: 15px;
-            max-height: 620px;
+            max-height: 640px;
             overflow-y: auto;
             background: #f8fafc;
         }
@@ -191,6 +196,7 @@
             transition: all 0.2s ease;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .subject-btn:hover {
@@ -233,6 +239,10 @@
             margin-top: 20px;
         }
 
+        @media(max-width: 550px) {
+            .metric-grid { grid-template-columns: 1fr; }
+        }
+
         .metric-card {
             background: white;
             padding: 14px;
@@ -252,16 +262,19 @@
         }
 
         .metric-card strong {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: var(--dark);
         }
 
-        /* Graphic Representation Boxes */
         .report-graphics-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
             gap: 20px;
             margin-top: 25px;
+        }
+
+        @media(max-width: 550px) {
+            .report-graphics-container { grid-template-columns: 1fr; }
         }
 
         .graphic-card {
@@ -269,7 +282,6 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 20px;
-            text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
@@ -281,17 +293,10 @@
             letter-spacing: 0.5px;
         }
 
-        .vector-illustration {
+        .live-chart-wrapper {
             width: 100%;
-            height: 240px;
-            background: #fafafa;
-            border: 1px dashed #cbd5e1;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 260px;
             position: relative;
-            overflow: hidden;
         }
 
         .dynamic-ecg-box {
@@ -299,18 +304,18 @@
             border-radius: 6px;
             padding: 15px;
             margin-top: 20px;
-            position: relative;
         }
 
-        .dynamic-ecg-box span {
+        .dynamic-ecg-box .panel-tag {
             color: #38bdf8;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
+            display: block;
+            margin-bottom: 5px;
         }
 
-        /* Master Data Table View */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -346,6 +351,7 @@
         .hardware-box {
             background: #fff3cd;
             border: 1px solid #ffeeba;
+            color: #856404;
             padding: 15px;
             border-radius: 6px;
             margin-top: 20px;
@@ -440,68 +446,24 @@
                 </section>
 
                 <section id="report-figures">
-                    <h2>Report Figures & Biometric Visualizations</h2>
+                    <h2>Live Analytical Visualizations & Trends</h2>
                     <p style="font-size:0.95rem; color:#475569; margin-bottom:15px;">
-                        Interactive vector reconstructions mapping directly to the physiological and signal processing figures from the original report documentation.
+                        Dynamic comparative population monitors compiled directly from verified metrics within the master experimental cohort data.
                     </p>
                     
                     <div class="report-graphics-container">
                         <div class="graphic-card">
-                            <h4>Fig 1: The Human Heart Anatomy</h4>
-                            <div class="vector-illustration" style="background:#fff;">
-                                <svg width="100%" height="100%" viewBox="0 0 220 220" style="font-family: sans-serif;">
-                                    <path d="M 65 30 L 80 30 L 80 80 L 65 75 Z" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/>
-                                    <text x="50" y="25" font-size="7" font-weight="bold" fill="#3730a3">Superior Vena Cava</text>
-                                    <line x1="63" y1="26" x2="72" y2="35" stroke="#3730a3" stroke-width="0.7"/>
-
-                                    <path d="M 95 50 C 95 10, 145 10, 145 60 L 130 65 C 130 35, 110 35, 110 55 Z" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
-                                    <path d="M 105 28 L 108 12 L 116 12 L 112 26 Z" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
-                                    <path d="M 120 22 L 125 10 L 133 10 L 127 23 Z" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
-                                    <text x="140" y="20" font-size="8" font-weight="bold" fill="#991b1b">Aorta</text>
-                                    <line x1="138" y1="21" x2="125" y2="28" stroke="#991b1b" stroke-width="0.7"/>
-
-                                    <path d="M 90 60 C 90 40, 135 45, 140 70 L 125 72 C 120 58, 100 55, 100 65 Z" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1"/>
-                                    <text x="160" y="52" font-size="7" font-weight="bold" fill="#1d4ed8">Pulmonary Artery</text>
-                                    <line x1="158" y1="53" x2="133" y2="58" stroke="#1d4ed8" stroke-width="0.7"/>
-
-                                    <path d="M 80 80 C 40 90, 60 190, 110 205 C 160 190, 175 100, 130 80 C 110 75, 95 75, 80 80 Z" fill="#f43f5e" stroke="#be123c" stroke-width="1.5" opacity="0.9"/>
-                                    
-                                    <path d="M 106 115 C 103 145, 105 180, 110 203" fill="none" stroke="#be123c" stroke-width="4"/>
-                                    <path d="M 85 110 C 100 112, 115 112, 125 105" fill="none" stroke="#be123c" stroke-width="2"/>
-
-                                    <text x="75" y="100" font-size="7" font-weight="bold" fill="#1e293b" text-anchor="middle">Right Atrium</text>
-                                    <text x="145" y="100" font-size="7" font-weight="bold" fill="#1e293b" text-anchor="middle">Left Atrium</text>
-
-                                    <text x="75" y="155" font-size="7" font-weight="bold" fill="#fff" text-anchor="middle">Right Ventricle</text>
-                                    <text x="145" y="155" font-size="7" font-weight="bold" fill="#fff" text-anchor="middle">Left Ventricle</text>
-                                    
-                                    <rect x="55" y="187" width="110" height="12" fill="rgba(15,23,42,0.8)" rx="3"/>
-                                    <text x="110" y="196" font-size="6.5" font-weight="bold" fill="#38bdf8" text-anchor="middle">CHAMBER STRUCTURAL MAP</text>
-                                </svg>
+                            <h4>Blood Pressure Profiling (Systolic vs Diastolic)</h4>
+                            <div class="live-chart-wrapper">
+                                <canvas id="populationBpChart"></canvas>
                             </div>
-                            <p style="font-size:0.75rem; color:#64748b; margin-top:8px; line-height:1.3;">
-                                Graphical mapping of electrical channels transporting deoxygenated and oxygenated volumes through human chambers.
-                            </p>
                         </div>
 
                         <div class="graphic-card">
-                            <h4>Fig 2: Dual Waveform Analysis (ECG vs PPG)</h4>
-                            <div class="vector-illustration" style="background:#0f172a;">
-                                <svg width="100%" height="100%" viewBox="0 0 200 120">
-                                    <path d="M 10 30 L 40 30 L 45 20 L 50 50 L 55 5 L 60 35 L 65 30 L 100 30 L 105 20 L 110 50 L 115 5 L 120 35 L 125 30 L 170 30" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
-                                    <path d="M 10 90 Q 30 70 45 75 T 70 90 Q 90 70 105 75 T 130 90 Q 150 70 165 75" fill="none" stroke="#34d399" stroke-width="1.5"/>
-                                    
-                                    <line x1="55" y1="5" x2="55" y2="110" stroke="#f43f5e" stroke-width="1" stroke-dasharray="2,2"/>
-                                    <line x1="45" y1="75" x2="45" y2="110" stroke="#f43f5e" stroke-width="1" stroke-dasharray="2,2"/>
-                                    
-                                    <text x="90" y="20" fill="#38bdf8" font-size="6" text-anchor="middle">RR Interval</text>
-                                    <text x="20" y="60" fill="#f43f5e" font-size="6">Pulse Arrival Time (PAT)</text>
-                                    <text x="135" y="105" fill="#34d399" font-size="6">Pulse Amplitude</text>
-                                </svg>
+                            <h4>Cognitive Performance Index (MMSE vs MoCA Score Ranges)</h4>
+                            <div class="live-chart-wrapper">
+                                <canvas id="populationCognitiveChart"></canvas>
                             </div>
-                            <p style="font-size:0.75rem; color:#64748b; margin-top:8px; line-height:1.3;">
-                                Non-invasive metrics mapping interval sequences between cardiac push limits and vessel response bounds.
-                            </p>
                         </div>
                     </div>
                 </section>
@@ -513,8 +475,7 @@
                     </p>
                     
                     <div class="dashboard-grid">
-                        <div class="subject-list-container" id="selector-container">
-                            </div>
+                        <div class="subject-list-container" id="selector-container"></div>
 
                         <div class="analysis-display-panel" id="analysis-panel">
                             <h3 id="panel-subject-title" style="margin-bottom:5px;">Select Subject Profile</h3>
@@ -537,17 +498,15 @@
                             </div>
 
                             <div class="dynamic-ecg-box">
-                                <span>Dynamic Experimental Waveform Monitor [Fig 3 / Fig 5]</span>
-                                <div style="height: 60px; margin-top:5px;">
-                                    <svg width="100%" height="100%" id="dynamic-wave-svg" viewBox="0 0 400 50">
-                                        <path id="wave-path" d="M 0 25 L 400 25" fill="none" stroke="#22c55e" stroke-width="2"/>
-                                    </svg>
+                                <span class="panel-tag">Live Microcontroller ECG Pulse Simulation</span>
+                                <div style="height: 70px; background: #000; padding: 5px; border-radius: 4px;">
+                                    <canvas id="liveEcgCanvas" style="width:100%; height:100%;"></canvas>
                                 </div>
                                 <div id="wave-caption" style="color:#cbd5e1; font-size:0.75rem; margin-top:5px; font-style:italic;"></div>
                             </div>
 
                             <div class="hardware-box">
-                                <strong>Active Hardware Pathway:</strong> Real-time data collection executed using the <strong>HealthyPi platform</strong> layered to a **knit jersey textile sensor grid**.
+                                <strong>Active Hardware Pathway:</strong> Real-time data collection executed using the <strong>HealthyPi platform</strong> layered to a <strong>knit jersey textile sensor grid</strong>.
                             </div>
                         </div>
                     </div>
@@ -563,8 +522,7 @@
                                     <th>Subject</th><th>Sex</th><th>Age</th><th>Height</th><th>Weight</th><th>SpO2%</th><th>SBP</th><th>DBP</th><th>Pulse</th><th>Health Sc.</th><th>WHOQOL</th><th>Temp</th><th>Diet</th><th>BMI</th><th>HRV</th><th>LF-ECG</th><th>HF-ECG</th><th>RMSV</th><th>SNR</th><th>PSNR</th><th>MMSE</th><th>MoCA</th><th>MNA</th><th>Edu</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-body-target">
-                                </tbody>
+                            <tbody id="table-body-target"></tbody>
                         </table>
                     </div>
                 </section>
@@ -594,8 +552,8 @@
 
             <div class="sidebar-panel">
                 <h3>Physiological Principles</h3>
-                <p><strong>Ref 1 (Systolic/SBP):</strong> The contracting push as blood forces outward from the cardiac chambers.</p>
-                <p><strong>Ref 2 (Diastolic/DBP):</strong> The resting muscle relaxation phase receiving incoming blood flow back from lungs.</p>
+                <p><strong>Systolic (SBP):</strong> The contracting push as blood forces outward from the cardiac chambers.</p>
+                <p><strong>Diastolic (DBP):</strong> The resting muscle relaxation phase receiving incoming blood flow back from lungs.</p>
                 <p><strong>Cardiac Capacity:</strong> The human heart loops roughly 6,000 to 7,500 liters of blood per day.</p>
                 <p><strong>Heart Mass Variation:</strong> Adult male organs scale near 280-340g; adult female profiles scale between 230-280g.</p>
                 
@@ -614,86 +572,200 @@
     </footer>
 
     <script>
-        // Synchronized population dataset
+        // Synchronized complete population dataset (18 subjects)
         const subjectData = [
             {id: 1, sex: "F", age: 60, ht: "5 ft", wt: 64.35, spo2: 97, sbp: 112, dbp: 73, pulse: 85, hScore: 65.5, whoqol: "75.3%", temp: "normal", diet: "Veg", bmi: 27.9, hrv: 61, lf: 241, hf: 132, rmsv: 0.98, snr: 43.2096, psnr: 29.9074, mmse: 22, moca: 23, mna: 11, edu: "Bsc"},
             {id: 2, sex: "F", age: 76, ht: "5.2ft", wt: 81.1, spo2: 97, sbp: 201, dbp: 90, pulse: 62, hScore: 64.8, whoqol: "74.8%", temp: "normal", diet: "Veg", bmi: 25.6, hrv: 64, lf: 189, hf: 161, rmsv: 0.39, snr: 46.8798, psnr: 33.7656, mmse: 23.5, moca: 23.5, mna: 11, edu: "12th"},
             {id: 3, sex: "M", age: 66, ht: "5.7ft", wt: 97.65, spo2: 96, sbp: 148, dbp: 91, pulse: 67, hScore: 78.5, whoqol: "72.6%", temp: "normal", diet: "Veg", bmi: 26.8, hrv: 71, lf: 195, hf: 109, rmsv: 0.46, snr: 54.7869, psnr: 39.8795, mmse: 27, moca: 24, mna: 13, edu: "B.com"},
             {id: 4, sex: "M", age: 53, ht: "5.2ft", wt: 65.55, spo2: 92, sbp: 139, dbp: 69, pulse: 79, hScore: 78.3, whoqol: "78%", temp: "normal", diet: "N-Veg", bmi: 25.7, hrv: 69, lf: 164, hf: 123, rmsv: 0.85, snr: 41.8087, psnr: 25.0869, mmse: 22.5, moca: 18.5, mna: 13, edu: "12th"},
-            {id: 5, sex: "F", age: 57, ht: "5.4ft", wt: 73.75, spo2: 93, sbp: 106, dbp: 63, pulse: 54, hScore: 63.1, whoqol: "76%", temp: "normal", diet: "Veg", bmi: 28.3, hrv: 63, lf: 129, hf: 74, rmsv: 0.67, stroke: "#ef4444", snr: 40.8964, psnr: 45.9793, mmse: 27, moca: 28, mna: 13, edu: "MBA"},
+            {id: 5, sex: "F", age: 57, ht: "5.4ft", wt: 73.75, spo2: 93, sbp: 106, dbp: 63, pulse: 54, hScore: 63.1, whoqol: "76%", temp: "normal", diet: "Veg", bmi: 28.3, hrv: 63, lf: 129, hf: 74, rmsv: 0.67, snr: 40.8964, psnr: 45.9793, mmse: 27, moca: 28, mna: 13, edu: "MBA"},
             {id: 6, sex: "F", age: 52, ht: "5.2ft", wt: 59.9, spo2: 94, sbp: 139, dbp: 72, pulse: 69, hScore: 73, whoqol: "66.5%", temp: "normal", diet: "N-Veg", bmi: 24.2, hrv: 66, lf: 182, hf: 105, rmsv: 0.72, snr: 45.6909, psnr: 38.9876, mmse: 29, moca: 26, mna: 13, edu: "M.tech"},
             {id: 7, sex: "M", age: 49, ht: "5.1ft", wt: 77.5, spo2: 100, sbp: 159, dbp: 88, pulse: 71, hScore: 65.3, whoqol: "76%", temp: "normal", diet: "Veg", bmi: 29.1, hrv: 71, lf: 193, hf: 109, rmsv: 0.43, snr: 39.0675, psnr: 40.2894, mmse: 28, moca: 20.5, mna: 14, edu: "10th"},
             {id: 8, sex: "M", age: 63, ht: "5.2ft", wt: 65.05, spo2: 89, sbp: 198, dbp: 94, pulse: 57, hScore: 55.7, whoqol: "58.46%", temp: "normal", diet: "N-Veg", bmi: 30.5, hrv: 60, lf: 108, hf: 63, rmsv: 0.33, snr: 48.9706, psnr: 29.7965, mmse: 27, moca: 29, mna: 12, edu: "Ph.D"},
-            {id: 9, sex: "F", age: 45, ht: "5.1ft", wt: 65, spo2: 91, sbp: 149, dbp: 89, pulse: 68, hScore: 55.7, whoqol: "51.5%", temp: "normal", diet: "N-Veg", bmi: 30.5, hrv: 64, lf: 84, hf: 34, rmsv: 0.85, stroke: "#ef4444", snr: 49.0865, psnr: 45.8869, mmse: 16, moca: 9.75, mna: 12, edu: "Ph.D"},
-            {id: 10, sex: "F", age: 55, ht: "5.3ft", wt: 55, spo2: 93, sbp: 145, dbp: 87, pulse: 71, hScore: 55.7, whoqol: "55%", temp: "normal", diet: "N-Veg", bmi: 30.5, hrv: 68, lf: 89, hf: 35, rmsv: 0.66, stroke: "#ef4444", snr: 34.9879, psnr: 52.7907, mmse: 13, moca: 5, mna: 11, edu: "M.tech"},
+            {id: 9, sex: "F", age: 45, ht: "5.1ft", wt: 65, spo2: 91, sbp: 149, dbp: 89, pulse: 68, hScore: 55.7, whoqol: "51.5%", temp: "normal", diet: "N-Veg", bmi: 30.5, hrv: 64, lf: 84, hf: 34, rmsv: 0.85, snr: 49.0865, psnr: 45.8869, mmse: 16, moca: 9.75, mna: 12, edu: "Ph.D"},
+            {id: 10, sex: "F", age: 55, ht: "5.3ft", wt: 55, spo2: 93, sbp: 145, dbp: 87, pulse: 71, hScore: 55.7, whoqol: "55%", temp: "normal", diet: "N-Veg", bmi: 30.5, hrv: 68, lf: 89, hf: 35, rmsv: 0.66, snr: 34.9879, psnr: 52.7907, mmse: 13, moca: 5, mna: 11, edu: "M.tech"},
             {id: 11, sex: "M", age: 55, ht: "5.4ft", wt: 86.45, spo2: 94, sbp: 141, dbp: 80, pulse: 70, hScore: 54.7, whoqol: "76.5%", temp: "normal", diet: "Veg", bmi: 35.1, hrv: 63, lf: 108, hf: 79, rmsv: 0.56, snr: 45.8908, psnr: 49.0979, mmse: 11.5, moca: 19, mna: 13, edu: "10th"},
             {id: 12, sex: "M", age: 53, ht: "5.2ft", wt: 73, spo2: 92, sbp: 145, dbp: 81, pulse: 71, hScore: 76.5, whoqol: "75%", temp: "normal", diet: "veg", bmi: 29, hrv: 65, lf: 143, hf: 87, rmsv: 0.45, snr: 38.8978, psnr: 48.5099, mmse: 27, moca: 14, mna: 12, edu: "below 10"},
-            {id: 13, sex: "F", age: 51, ht: "5.7ft", wt: 57, spo2: 97, sbp: 148, dbp: 84, pulse: 70, hScore: 53.5, whoqol: "55%", temp: "normal", diet: "N-Veg", bmi: 30, hrv: 68, lf: 168, hf: 98, rmsv: 0.93, stroke: "#ef4444", snr: 52.8978, psnr: 43.9068, mmse: 26, moca: 5, mna: 11, edu: "10th"},
+            {id: 13, sex: "F", age: 51, ht: "5.7ft", wt: 57, spo2: 97, sbp: 148, dbp: 84, pulse: 70, hScore: 53.5, whoqol: "55%", temp: "normal", diet: "N-Veg", bmi: 30, hrv: 68, lf: 168, hf: 98, rmsv: 0.93, snr: 52.8978, psnr: 43.9068, mmse: 26, moca: 5, mna: 11, edu: "10th"},
             {id: 14, sex: "M", age: 57, ht: "5.3ft", wt: 84, spo2: 92, sbp: 143, dbp: 83, pulse: 67, hScore: 54.9, whoqol: "76.5%", temp: "normal", diet: "Veg", bmi: 34, hrv: 70, lf: 137, hf: 69, rmsv: 0.83, snr: 50.5432, psnr: 48.9686, mmse: 11.5, moca: 19, mna: 13, edu: "10th"},
             {id: 15, sex: "F", age: 50, ht: "5.1ft", wt: 69, spo2: 95, sbp: 149, dbp: 88, pulse: 69, hScore: 74, whoqol: "75%", temp: "normal", diet: "veg", bmi: 28, hrv: 68, lf: 89, hf: 45, rmsv: 0.99, snr: 40.8978, psnr: 40.8596, mmse: 19, moca: 15, mna: 11, edu: "below 10"},
             {id: 16, sex: "M", age: 54, ht: "5.4ft", wt: 53, spo2: 99, sbp: 140, dbp: 85, pulse: 99, hScore: 86, whoqol: "75%", temp: "normal", diet: "N-Veg", bmi: 19.9, hrv: 64, lf: 136, hf: 84, rmsv: 0.56, snr: 50.0979, psnr: 41.9896, mmse: 10.5, moca: 16, mna: 11, edu: "below 10"},
             {id: 17, sex: "M", age: 62, ht: "5.1ft", wt: 65, spo2: 98, sbp: 145, dbp: 92, pulse: 98, hScore: 74, whoqol: "74%", temp: "normal", diet: "N-veg", bmi: 27.6, hrv: 69, lf: 159, hf: 95, rmsv: 0.96, snr: 39.8897, psnr: 25.897, mmse: 16, moca: 15, mna: 12, edu: "10th"},
-            {id: 18, sex: "M", age: 58, ht: "5.3ft", wt: 67, spo2: 96, sbp: 142, dbp: 88, pulse: 96, hScore: 72, whoqol: "73%", temp: "normal", diet: "N-Veg", bmi: 27.2, hrv: 60, lf: 176, hf: 98, rmsv: 0.46, snr: 47.9707, psnr: 33.9886, mmse: 15, moca: 14, mna: 12, edu: "10th"}
+            {id: 18, sex: "M", age: 58, ht: "5.3ft", wt: 67, spo2: 96, sbp: 142, dbp: 88, pulse: 74, hScore: 71.0, whoqol: "73%", temp: "normal", diet: "N-Veg", bmi: 26.2, hrv: 67, lf: 150, hf: 90, rmsv: 0.88, snr: 42.1500, psnr: 31.2000, mmse: 20, moca: 18, mna: 12, edu: "12th"}
         ];
 
-        const selectorContainer = document.getElementById('selector-container');
-        const tableBody = document.getElementById('table-body-target');
+        // Render full table elements
+        const tableBody = document.getElementById("table-body-target");
+        const selectorContainer = document.getElementById("selector-container");
 
-        subjectData.forEach((s, idx) => {
-            const btn = document.createElement('button');
-            btn.className = `subject-btn ${idx === 0 ? 'active' : ''}`;
-            btn.innerHTML = `<span>Subject #${s.id} (${s.sex})</span> <span class="badge">Age ${s.age}</span>`;
-            btn.onclick = () => updatePanel(s, btn);
-            selectorContainer.appendChild(btn);
-
-            const row = document.createElement('tr');
+        subjectData.forEach((sub, index) => {
+            // Build Table View
+            const row = document.createElement("tr");
             row.innerHTML = `
-                <td><strong>Sub ${s.id}</strong></td><td>${s.sex}</td><td>${s.age}</td><td>${s.ht}</td><td>${s.wt}</td>
-                <td>${s.spo2}%</td><td>${s.sbp}</td><td>${s.dbp}</td><td>${s.pulse}</td><td>${s.hScore}</td>
-                <td>${s.whoqol}</td><td>${s.temp}</td><td>${s.diet}</td><td>${s.bmi}</td><td>${s.hrv}</td>
-                <td>${s.lf}</td><td>${s.hf}</td><td>${s.rmsv}</td><td>${s.snr}</td><td>${s.psnr}</td>
-                <td>${s.mmse}</td><td>${s.moca}</td><td>${s.mna}</td><td>${s.edu}</td>
+                <td><strong>Sub(${sub.id})</strong></td><td>${sub.sex}</td><td>${sub.age}</td><td>${sub.ht}</td>
+                <td>${sub.wt}</td><td>${sub.spo2}%</td><td>${sub.sbp}</td><td>${sub.dbp}</td>
+                <td>${sub.pulse}</td><td>${sub.hScore}</td><td>${sub.whoqol}</td><td>${sub.temp}</td>
+                <td>${sub.diet}</td><td>${sub.bmi}</td><td>${sub.hrv}</td><td>${sub.lf}</td>
+                <td>${sub.hf}</td><td>${sub.rmsv}</td><td>${sub.snr.toFixed(2)}</td><td>${sub.psnr.toFixed(2)}</td>
+                <td>${sub.mmse}</td><td>${sub.moca}</td><td>${sub.mna}</td><td>${sub.edu}</td>
             `;
             tableBody.appendChild(row);
+
+            // Build Left-Sided Button selectors
+            const btn = document.createElement("button");
+            btn.className = `subject-btn ${index === 0 ? 'active' : ''}`;
+            btn.onclick = () => activateSubject(sub.id, btn);
+            btn.innerHTML = `<span>Subject Group Profile #${sub.id}</span> <span class="badge">${sub.sex} | Age ${sub.age}</span>`;
+            selectorContainer.appendChild(btn);
         });
 
-        function updatePanel(s, activeBtn) {
-            document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
-            activeBtn.classList.add('active');
+        // Interactive Isolated Monitor Updates
+        function activateSubject(id, clickedElement) {
+            document.querySelectorAll(".subject-btn").forEach(b => b.classList.remove("active"));
+            if(clickedElement) clickedElement.classList.add("active");
 
-            document.getElementById('panel-subject-title').innerText = `Analytical Review: Subject #${s.id}`;
-            document.getElementById('panel-subject-subtitle').innerText = `Physiological & Mental Correlation Dashboard`;
-            
-            document.getElementById('m-demographics').innerText = `${s.sex === 'M' ? 'Male' : 'Female'} / ${s.age} Years Old`;
-            document.getElementById('m-bmi').innerText = `${s.bmi} (Ht: ${s.ht} | Wt: ${s.wt} kg)`;
-            document.getElementById('m-bp').innerText = `${s.sbp} / ${s.dbp} mmHg`;
-            document.getElementById('m-pulse-spo2').innerText = `${s.pulse} BPM / ${s.spo2}% SpO2`;
-            document.getElementById('m-whoqol').innerText = `${s.whoqol}`;
-            document.getElementById('m-health-temp').innerText = `Score: ${s.hScore} / Temp: ${s.temp}`;
-            document.getElementById('m-hrv').innerText = `${s.hrv}`;
-            document.getElementById('m-lf-hf').innerText = `LF: ${s.lf} / HF: ${s.hf} (RMSV: ${s.rmsv})`;
-            document.getElementById('m-snr-psnr').innerText = `SNR: ${s.snr} / PSNR: ${s.psnr}`;
-            document.getElementById('m-cognitive').innerText = `MMSE: ${s.mmse} | MoCA: ${s.moca} /30`;
-            document.getElementById('m-mna').innerText = `${s.mna} Marks`;
-            document.getElementById('m-bg-details').innerText = `Diet: ${s.diet} | Education: ${s.edu}`;
+            const patient = subjectData.find(s => s.id === id);
+            if(!patient) return;
 
-            const wavePath = document.getElementById('wave-path');
-            const waveCaption = document.getElementById('wave-caption');
+            document.getElementById("panel-subject-title").innerText = `Subject Profile Matrix (${patient.id})`;
+            document.getElementById("panel-subject-subtitle").innerText = `Clinical Target Validation Track • Sex: ${patient.sex}`;
+
+            document.getElementById("m-demographics").innerText = `${patient.age} Yrs Old / ${patient.sex} Format`;
+            document.getElementById("m-bmi").innerText = `${patient.bmi} kg/m²`;
+            document.getElementById("m-bp").innerText = `${patient.sbp} / ${patient.dbp} mmHg`;
+            document.getElementById("m-pulse-spo2").innerText = `${patient.pulse} BPM / ${patient.spo2}% SpO2`;
+            document.getElementById("m-whoqol").innerText = patient.whoqol;
+            document.getElementById("m-health-temp").innerText = `${patient.hScore} Index / ${patient.temp}`;
+            document.getElementById("m-hrv").innerText = `${patient.hrv} ms`;
+            document.getElementById("m-lf-hf").innerText = `${patient.lf} Hz / ${patient.hf} Hz`;
+            document.getElementById("m-snr-psnr").innerText = `${patient.snr.toFixed(1)} dB / ${patient.psnr.toFixed(1)} dB`;
+            document.getElementById("m-cognitive").innerText = `MMSE: ${patient.mmse} | MoCA: ${patient.moca}`;
+            document.getElementById("m-mna").innerText = `${patient.mna} Assessment Points`;
+            document.getElementById("m-bg-details").innerText = `${patient.diet} / Edu Base: ${patient.edu}`;
+
+            document.getElementById("wave-caption").innerText = `Displaying real-time simulated cardiac cycle calculated at an active ${patient.pulse} BPM output frequency threshold.`;
             
-            if (s.moca < 10 || s.stroke === '#ef4444') {
-                wavePath.setAttribute('d', 'M 0 25 L 30 25 L 35 15 L 40 40 L 43 5 L 48 30 L 70 25 L 100 25 L 105 18 L 110 42 L 113 8 L 118 28 L 150 25 L 190 25 L 195 15 L 200 40 L 203 5 L 208 30 L 260 25 L 300 25 L 305 15 L 310 40 L 313 5 L 318 30 L 400 25');
-                wavePath.setAttribute('stroke', '#ef4444');
-                waveCaption.innerHTML = "🚨 <strong>Visual State [Fig.5]:</strong> Depressed baseline sequence. Noticeable shifts in frequency peaks map closely to lower tracked cognitive scores.";
-            } else {
-                wavePath.setAttribute('d', 'M 0 25 L 40 25 L 45 15 L 50 45 L 53 2 L 58 32 L 65 25 L 120 25 L 125 15 L 130 45 L 133 2 L 138 32 L 145 25 L 210 25 L 215 15 L 220 45 L 223 2 L 228 32 L 235 25 L 300 25 L 305 15 L 310 45 L 313 2 L 318 32 L 400 25');
-                wavePath.setAttribute('stroke', '#22c55e');
-                waveCaption.innerHTML = "✅ <strong>Visual State [Fig.3]:</strong> Healthy/Normal operational signal sequence. Clean interval spaces with minimum noise elements observed.";
+            // Speed up or slow down simulated waveform trace based on actual recorded pulse rate
+            currentPulseInterval = Math.max(30, Math.min(120, patient.pulse));
+        }
+
+        // Live Canvas Microcontroller ECG Wave Rendering Logic
+        const canvas = document.getElementById("liveEcgCanvas");
+        const ctx = canvas.getContext("2d");
+        let animationId;
+        let x = 0;
+        let currentPulseInterval = 85;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawEcgLine() {
+            if (x > canvas.width) {
+                x = 0;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
+
+            // Draw clean background grid tracks
+            if (x === 0) {
+                ctx.strokeStyle = "#1e293b";
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i < canvas.width; i += 20) {
+                    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+                }
+                for (let j = 0; j < canvas.height; j += 20) {
+                    ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+                }
+            }
+
+            // Generate realistic mathematical ECG complex equations (P-Q-R-S-T wave sequence)
+            let midY = canvas.height / 2;
+            let cycle = (x % currentPulseInterval) / currentPulseInterval;
+            let y = midY;
+
+            if (cycle > 0.1 && cycle < 0.15) { // P Wave
+                y -= Math.sin((cycle - 0.1) * Math.PI / 0.05) * 6;
+            } else if (cycle >= 0.2 && cycle < 0.23) { // Q Dip
+                y += (cycle - 0.2) * 100;
+            } else if (cycle >= 0.23 && cycle < 0.27) { // R Spike
+                y -= 35 - ((cycle - 0.23) * 150);
+            } else if (cycle >= 0.27 && cycle < 0.32) { // S Dip
+                y += 15 - ((cycle - 0.27) * 60);
+            } else if (cycle >= 0.45 && cycle < 0.55) { // T Wave
+                y -= Math.sin((cycle - 0.45) * Math.PI / 0.1) * 10;
+            }
+
+            ctx.strokeStyle = "#22c55e";
+            ctx.shadowColor = "#22c55e";
+            ctx.shadowBlur = 4;
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = "round";
+
+            ctx.beginPath();
+            ctx.moveTo(x, midY);
+            ctx.lineTo(x + 2, y);
+            ctx.stroke();
+
+            // Clear absolute tiny strip directly ahead of current sweep trace to avoid visual artifacts
+            ctx.shadowBlur = 0;
+            ctx.clearRect(x + 3, 0, 8, canvas.height);
+
+            x += 2;
+            animationId = requestAnimationFrame(drawEcgLine);
         }
 
-        if(subjectData.length > 0) {
-            updatePanel(subjectData[0], selectorContainer.firstElementChild);
+        // Initialize Population Trends Charts using Chart.js library
+        function initGlobalCharts() {
+            const labels = subjectData.map(s => `S${s.id}`);
+            const sbpData = subjectData.map(s => s.sbp);
+            const dbpData = subjectData.map(s => s.dbp);
+            const mmseData = subjectData.map(s => s.mmse);
+            const mocaData = subjectData.map(s => s.moca);
+
+            // Chart 1: Blood Pressure Trends
+            new Chart(document.getElementById('populationBpChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Systolic (SBP)', data: sbpData, backgroundColor: '#e11d48' },
+                        { label: 'Diastolic (DBP)', data: dbpData, backgroundColor: '#2563eb' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: false, title: { display: true, text: 'mmHg Value Range' } } }
+                }
+            });
+
+            // Chart 2: Cognitive Matrix Line Metrics
+            new Chart(document.getElementById('populationCognitiveChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'MMSE Assessment Tracker', data: mmseData, borderColor: '#0d9488', tension: 0.2, fill: false },
+                        { label: 'MoCA Assessment Tracker', data: mocaData, borderColor: '#4f46e5', tension: 0.2, fill: false }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 0, max: 30, title: { display: true, text: 'Exam Grade Score Scale' } } }
+                }
+            });
         }
+
+        // Start Execution Sequences
+        window.onload = () => {
+            activateSubject(1, document.querySelector(".subject-btn"));
+            drawEcgLine();
+            initGlobalCharts();
+        };
     </script>
 </body>
 </html>
