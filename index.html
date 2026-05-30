@@ -232,6 +232,49 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
+        /* Panel Title Flex Row to place Heart Animation */
+        .panel-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        /* Live Heart Pumping Container Layout */
+        .heart-visualization-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 75px;
+        }
+
+        .live-pumping-heart {
+            fill: var(--accent);
+            width: 42px;
+            height: 42px;
+            transform-origin: center;
+            filter: drop-shadow(0px 2px 6px rgba(225, 29, 72, 0.4));
+            animation: physiological-pulse 0.7s infinite cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+
+        .heart-bpm-counter {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Realistic Multi-Phase Cardiac Contraction Sequence */
+        @keyframes physiological-pulse {
+            0% { transform: scale(0.92); }
+            28% { transform: scale(1.15); } /* Systolic Contraction Push */
+            42% { transform: scale(0.98); } /* Short Valvular Recoil */
+            56% { transform: scale(1.08); } /* Secondary Atrial Refill Peak */
+            100% { transform: scale(0.92); } /* Diastolic Relaxation */
+        }
+
         .metric-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -478,8 +521,18 @@
                         <div class="subject-list-container" id="selector-container"></div>
 
                         <div class="analysis-display-panel" id="analysis-panel">
-                            <h3 id="panel-subject-title" style="margin-bottom:5px;">Select Subject Profile</h3>
-                            <div id="panel-subject-subtitle" style="font-size:0.85rem; color:#64748b; font-weight:600; margin-bottom:15px; text-transform:uppercase;"></div>
+                            <div class="panel-header-row">
+                                <div class="title-block">
+                                    <h3 id="panel-subject-title" style="margin-bottom:5px;">Select Subject Profile</h3>
+                                    <div id="panel-subject-subtitle" style="font-size:0.85rem; color:#64748b; font-weight:600; text-transform:uppercase;"></div>
+                                </div>
+                                <div class="heart-visualization-box">
+                                    <svg class="live-pumping-heart" id="cardiac-heart-element" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5w-3.4 3.78L12 21.35z"/>
+                                    </svg>
+                                    <div class="heart-bpm-counter"><span id="heart-bpm-numeric">0</span> BPM</div>
+                                </div>
+                            </div>
                             <hr style="border: 0; border-top: 1px solid #e2e8f0;">
                             
                             <div class="metric-grid">
@@ -645,6 +698,16 @@
 
             document.getElementById("wave-caption").innerText = `Displaying real-time simulated cardiac cycle calculated at an active ${patient.pulse} BPM output frequency threshold.`;
             
+            // DYNAMIC HEART ANIMATION STEP
+            // Calculate duration of one complete cardiac loop based on actual patient BPM
+            const beatDurationInSeconds = 60 / patient.pulse;
+            const heartSVG = document.getElementById("cardiac-heart-element");
+            const heartText = document.getElementById("heart-bpm-numeric");
+            
+            // Dynamically alter text content and CSS shorthand rules instantly
+            heartText.innerText = patient.pulse;
+            heartSVG.style.animationDuration = `${beatDurationInSeconds}s`;
+
             // Speed up or slow down simulated waveform trace based on actual recorded pulse rate
             currentPulseInterval = Math.max(30, Math.min(120, patient.pulse));
         }
@@ -669,103 +732,77 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
 
-            // Draw clean background grid tracks
             if (x === 0) {
                 ctx.strokeStyle = "#1e293b";
                 ctx.lineWidth = 0.5;
-                for (let i = 0; i < canvas.width; i += 20) {
-                    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-                }
-                for (let j = 0; j < canvas.height; j += 20) {
-                    ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+                for(let i=0; i<canvas.height; i+=15) {
+                    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
                 }
             }
 
-            // Generate realistic mathematical ECG complex equations (P-Q-R-S-T wave sequence)
-            let midY = canvas.height / 2;
-            let cycle = (x % currentPulseInterval) / currentPulseInterval;
-            let y = midY;
+            // Generate synthetic real-time micro-beats
+            let baseLine = canvas.height / 2;
+            let cyclePosition = x % Math.floor(6000 / currentPulseInterval);
+            let y = baseLine;
 
-            if (cycle > 0.1 && cycle < 0.15) { // P Wave
-                y -= Math.sin((cycle - 0.1) * Math.PI / 0.05) * 6;
-            } else if (cycle >= 0.2 && cycle < 0.23) { // Q Dip
-                y += (cycle - 0.2) * 100;
-            } else if (cycle >= 0.23 && cycle < 0.27) { // R Spike
-                y -= 35 - ((cycle - 0.23) * 150);
-            } else if (cycle >= 0.27 && cycle < 0.32) { // S Dip
-                y += 15 - ((cycle - 0.27) * 60);
-            } else if (cycle >= 0.45 && cycle < 0.55) { // T Wave
-                y -= Math.sin((cycle - 0.45) * Math.PI / 0.1) * 10;
+            if (cyclePosition > 10 && cyclePosition <= 18) {
+                y -= 4; // P-Wave Segment
+            } else if (cyclePosition === 24) {
+                y += 6; // Q Downward Dip
+            } else if (cyclePosition === 26) {
+                y -= baseLine * 0.75; // R spike peak
+            } else if (cyclePosition === 28) {
+                y += baseLine * 0.4; // S Dip
+            } else if (cyclePosition > 38 && cyclePosition <= 50) {
+                y -= 8; // T-Wave Ventricular Repolarization
             }
 
-            ctx.strokeStyle = "#22c55e";
-            ctx.shadowColor = "#22c55e";
-            ctx.shadowBlur = 4;
+            ctx.strokeStyle = "#10b981";
             ctx.lineWidth = 2.5;
-            ctx.lineCap = "round";
-
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "#10b981";
+            
             ctx.beginPath();
-            ctx.moveTo(x, midY);
-            ctx.lineTo(x + 2, y);
+            ctx.moveTo(x, y);
+            x += 1.8;
+            ctx.lineTo(x, y);
             ctx.stroke();
 
-            // Clear absolute tiny strip directly ahead of current sweep trace to avoid visual artifacts
-            ctx.shadowBlur = 0;
-            ctx.clearRect(x + 3, 0, 8, canvas.height);
-
-            x += 2;
+            ctx.shadowBlur = 0; // reset
             animationId = requestAnimationFrame(drawEcgLine);
         }
 
-        // Initialize Population Trends Charts using Chart.js library
-        function initGlobalCharts() {
-            const labels = subjectData.map(s => `S${s.id}`);
-            const sbpData = subjectData.map(s => s.sbp);
-            const dbpData = subjectData.map(s => s.dbp);
-            const mmseData = subjectData.map(s => s.mmse);
-            const mocaData = subjectData.map(s => s.moca);
+        // Initialize background population analytics dashboard charts using standard layouts
+        window.addEventListener('DOMContentLoaded', () => {
+            activateSubject(1, null);
+            drawEcgLine();
 
-            // Chart 1: Blood Pressure Trends
-            new Chart(document.getElementById('populationBpChart'), {
+            // SBP vs DBP Group Layout
+            new Chart(document.getElementById('populationBpChart').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: subjectData.map(s => `Sub ${s.id}`),
                     datasets: [
-                        { label: 'Systolic (SBP)', data: sbpData, backgroundColor: '#e11d48' },
-                        { label: 'Diastolic (DBP)', data: dbpData, backgroundColor: '#2563eb' }
+                        { label: 'Systolic Blood Pressure (mmHg)', data: subjectData.map(s => s.sbp), backgroundColor: '#3b82f6' },
+                        { label: 'Diastolic Blood Pressure (mmHg)', data: subjectData.map(s => s.dbp), backgroundColor: '#0d9488' }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: false, title: { display: true, text: 'mmHg Value Range' } } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false, min: 50 } } }
             });
 
-            // Chart 2: Cognitive Matrix Line Metrics
-            new Chart(document.getElementById('populationCognitiveChart'), {
+            // Cognitive Tracker Chart
+            new Chart(document.getElementById('populationCognitiveChart').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: subjectData.map(s => `Sub ${s.id}`),
                     datasets: [
-                        { label: 'MMSE Assessment Tracker', data: mmseData, borderColor: '#0d9488', tension: 0.2, fill: false },
-                        { label: 'MoCA Assessment Tracker', data: mocaData, borderColor: '#4f46e5', tension: 0.2, fill: false }
+                        { label: 'MMSE Assessment Score', data: subjectData.map(s => s.mmse), borderColor: '#ef4444', tension: 0.25, fill: false },
+                        { label: 'MoCA Assessment Score', data: subjectData.map(s => s.moca), borderColor: '#f59e0b', tension: 0.25, fill: false }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { min: 0, max: 30, title: { display: true, text: 'Exam Grade Score Scale' } } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 30, min: 0 } } }
             });
-        }
-
-        // Start Execution Sequences
-        window.onload = () => {
-            activateSubject(1, document.querySelector(".subject-btn"));
-            drawEcgLine();
-            initGlobalCharts();
-        };
+        });
     </script>
 </body>
 </html>
