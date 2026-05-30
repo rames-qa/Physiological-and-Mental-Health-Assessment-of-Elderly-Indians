@@ -252,7 +252,6 @@
             margin-bottom: 15px;
         }
 
-        /* 3D Real Heart Simulation Container Box */
         .heart-visualization-box {
             display: flex;
             align-items: center;
@@ -323,7 +322,7 @@
         }
 
         .metric-card strong {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #fff;
             font-family: monospace;
         }
@@ -474,7 +473,6 @@
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-deep); }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
@@ -561,7 +559,6 @@
                                     <div id="panel-subject-subtitle" style="font-size:0.85rem; color:var(--neon-blue); font-weight:600; text-transform:uppercase;"></div>
                                 </div>
                                 
-                                <!-- 3D Generated Anatomical Heart Container (References canvas_2.png layout structure) -->
                                 <div class="heart-visualization-box">
                                     <div class="heart-canvas-container">
                                         <canvas id="animatedHeart3D" width="110" height="110"></canvas>
@@ -593,7 +590,7 @@
                             <div class="dynamic-ecg-box">
                                 <span class="panel-tag">Live Microcontroller ECG Pulse Simulation</span>
                                 <div style="height: 100px; background: #040712; padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05)">
-                                    <canvas id="liveEcgCanvas" style="width:100%; height:100%;"></canvas>
+                                    <canvas id="liveEbgCanvas" style="width:100%; height:100%;"></canvas>
                                 </div>
                                 <div id="wave-caption" style="color:var(--text-muted); font-size:0.8rem; margin-top:8px; font-style:italic;"></div>
                             </div>
@@ -665,7 +662,6 @@
     </footer>
 
     <script>
-        // Data Matrix Array
         const subjectData = [
             {id: 1, sex: "F", age: 60, ht: "5 ft", wt: 64.35, spo2: 97, sbp: 112, dbp: 73, pulse: 85, hScore: 65.5, whoqol: "75.3%", temp: "normal", diet: "Veg", bmi: 27.9, hrv: 61, lf: 241, hf: 132, rmsv: 0.98, snr: 43.2096, psnr: 29.9074, mmse: 22, moca: 23, mna: 11, edu: "Bsc"},
             {id: 2, sex: "F", age: 76, ht: "5.2ft", wt: 81.1, spo2: 97, sbp: 201, dbp: 90, pulse: 62, hScore: 64.8, whoqol: "74.8%", temp: "normal", diet: "Veg", bmi: 25.6, hrv: 64, lf: 189, hf: 161, rmsv: 0.39, snr: 46.8798, psnr: 33.7656, mmse: 23.5, moca: 23.5, mna: 11, edu: "12th"},
@@ -687,240 +683,219 @@
             {id: 18, sex: "M", age: 58, ht: "5.3ft", wt: 67, spo2: 96, sbp: 142, dbp: 88, pulse: 74, hScore: 71.0, whoqol: "73%", temp: "normal", diet: "N-Veg", bmi: 26.2, hrv: 67, lf: 150, hf: 90, rmsv: 0.88, snr: 42.1500, psnr: 31.2000, mmse: 20, moca: 18, mna: 12, edu: "12th"}
         ];
 
+        // Health Status Evaluation Engine
+        function getHealthStatus(patient) {
+            if (patient.sbp >= 160 || patient.dbp >= 100) return { label: "Stage 2 Hypertension", color: "#ff2a6d" };
+            if (patient.sbp >= 140 || patient.dbp >= 90) return { label: "Stage 1 Hypertension", color: "#f59e0b" };
+            if (patient.sbp >= 120 || patient.dbp >= 80) return { label: "Prehypertension", color: "#05d9e8" };
+            return { label: "Normal Vasculature", color: "#00ffcc" };
+        }
+
+        // Initialize Master Matrix Table View
         const tableBody = document.getElementById("table-body-target");
-        const selectorContainer = document.getElementById("selector-container");
-
-        subjectData.forEach((sub, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td><strong>Sub(${sub.id})</strong></td><td>${sub.sex}</td><td>${sub.age}</td><td>${sub.ht}</td>
-                <td>${sub.wt}</td><td>${sub.spo2}%</td><td>${sub.sbp}</td><td>${sub.dbp}</td>
-                <td>${sub.pulse}</td><td>${sub.hScore}</td><td>${sub.whoqol}</td><td>${sub.temp}</td>
-                <td>${sub.diet}</td><td>${sub.bmi}</td><td>${sub.hrv}</td><td>${sub.lf}</td>
-                <td>${sub.hf}</td><td>${sub.rmsv}</td><td>${sub.snr.toFixed(2)}</td><td>${sub.psnr.toFixed(2)}</td>
-                <td>${sub.mmse}</td><td>${sub.moca}</td><td>${sub.mna}</td><td>${sub.edu}</td>
+        subjectData.forEach(p => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><strong>Sub-${p.id}</strong></td><td>${p.sex}</td><td>${p.age}</td>
+                <td>${p.ht}</td><td>${p.wt}kg</td><td>${p.spo2}%</td>
+                <td>${p.sbp}</td><td>${p.dbp}</td><td>${p.pulse}</td>
+                <td>${p.hScore}</td><td>${p.whoqol}</td><td>${p.temp}</td>
+                <td>${p.diet}</td><td>${p.bmi}</td><td>${p.hrv}ms</td>
+                <td>${p.lf}</td><td>${p.hf}</td><td>${p.rmsv}</td>
+                <td>${p.snr.toFixed(1)}</td><td>${p.psnr.toFixed(1)}</td>
+                <td>${p.mmse}</td><td>${p.moca}</td><td>${p.mna}</td><td>${p.edu}</td>
             `;
-            tableBody.appendChild(row);
+            tableBody.appendChild(tr);
+        });
 
+        // Initialize Left Panel Selector Buttons
+        const selectorContainer = document.getElementById("selector-container");
+        subjectData.forEach(p => {
             const btn = document.createElement("button");
-            btn.className = `subject-btn ${index === 0 ? 'active' : ''}`;
-            btn.onclick = () => activateSubject(sub.id, btn);
-            btn.innerHTML = `<span>Subject Group Profile #${sub.id}</span> <span class="badge">${sub.sex} | Age ${sub.age}</span>`;
+            btn.className = `subject-btn ${p.id === 1 ? 'active' : ''}`;
+            btn.innerHTML = `<span>Subject Profile #${p.id} (${p.sex}/${p.age})</span> <span class="badge">BP ${p.sbp}/${p.dbp}</span>`;
+            btn.onclick = () => selectSubject(p.id, btn);
             selectorContainer.appendChild(btn);
         });
 
-        let currentPulseInterval = 85;
+        // Live ECG Simulator Engine
+        const ecgCanvas = document.getElementById("liveEbgCanvas");
+        const ecgCtx = ecgCanvas.getContext("2d");
+        let ecgX = 0;
+        let activeBpm = 85;
+        let ecgAnimationId;
 
-        function activateSubject(id, clickedElement) {
-            document.querySelectorAll(".subject-btn").forEach(b => b.classList.remove("active"));
-            if(clickedElement) clickedElement.classList.add("active");
-
-            const patient = subjectData.find(s => s.id === id);
-            if(!patient) return;
-
-            document.getElementById("panel-subject-title").innerText = `Subject Profile Matrix (${patient.id})`;
-            document.getElementById("panel-subject-subtitle").innerText = `Clinical Target Validation Track • Sex: ${patient.sex}`;
-
-            document.getElementById("m-demographics").innerText = `${patient.age} Yrs Old / ${patient.sex}`;
-            document.getElementById("m-bmi").innerText = `${patient.bmi} kg/m²`;
-            document.getElementById("m-bp").innerText = `${patient.sbp} / ${patient.dbp} mmHg`;
-            document.getElementById("m-pulse-spo2").innerText = `${patient.pulse} BPM / ${patient.spo2}%`;
-            document.getElementById("m-whoqol").innerText = patient.whoqol;
-            document.getElementById("m-health-temp").innerText = `${patient.hScore} / ${patient.temp}`;
-            document.getElementById("m-hrv").innerText = `${patient.hrv} ms`;
-            document.getElementById("m-lf-hf").innerText = `${patient.lf} / ${patient.hf} Hz`;
-            document.getElementById("m-snr-psnr").innerText = `${patient.snr.toFixed(1)} / ${patient.psnr.toFixed(1)} dB`;
-            document.getElementById("m-cognitive").innerText = `MMSE: ${patient.mmse} | MoCA: ${patient.moca}`;
-            document.getElementById("m-mna").innerText = `${patient.mna} Points`;
-            document.getElementById("m-bg-details").innerText = `${patient.diet} / ${patient.edu}`;
-
-            document.getElementById("wave-caption").innerText = `Displaying real-time simulated cardiac cycle calculated at an active ${patient.pulse} BPM output frequency threshold.`;
+        function drawEcg() {
+            const width = ecgCanvas.width = ecgCanvas.parentElement.clientWidth;
+            const height = ecgCanvas.height = 100;
             
-            document.getElementById("heart-bpm-numeric").innerText = patient.pulse;
-            currentPulseInterval = patient.pulse;
+            // Draw clean clear persistance screen sweep path
+            ecgCtx.fillStyle = "rgba(4, 7, 18, 0.05)";
+            ecgCtx.fillRect(ecgX, 0, 20, height);
+
+            // Computational base wave equations mimicking typical Lead-II complexes
+            let baseIndex = (ecgX % Math.floor(60000 / activeBpm));
+            let y = height / 2;
+
+            if (baseIndex > 10 && baseIndex < 25) {
+                // P Wave configuration
+                y -= Math.sin((baseIndex - 10) * Math.PI / 15) * 6;
+            } else if (baseIndex >= 30 && baseIndex < 34) {
+                // Q Deflection
+                y += (baseIndex - 30) * 4;
+            } else if (baseIndex >= 34 && baseIndex < 40) {
+                // R Peak Ascent
+                y -= (baseIndex - 34) * 12;
+            } else if (baseIndex >= 40 && baseIndex < 46) {
+                // S Deflection Dip
+                y += (baseIndex - 40) * 14 - 40;
+            } else if (baseIndex >= 55 && baseIndex < 75) {
+                // T Wave repolarization matrix
+                y -= Math.sin((baseIndex - 55) * Math.PI / 20) * 10;
+            }
+
+            ecgCtx.strokeStyle = "#00ffcc";
+            ecgCtx.lineWidth = 2;
+            ecgCtx.shadowBlur = 4;
+            ecgCtx.shadowColor = "#00ffcc";
+            
+            ecgCtx.beginPath();
+            ecgCtx.moveTo(ecgX, y);
+            ecgCtx.lineTo(ecgX + 1, y);
+            ecgCtx.stroke();
+
+            ecgX = (ecgX + 2) % width;
+            ecgAnimationId = requestAnimationFrame(drawEcg);
         }
 
-        // --- REAL ANATOMICAL VECTOR HEART CANVAS GENERATOR (Anatomy reference: canvas_2.png) ---
+        // 3D Matrix Structural Core Heart Pulsing Visualization Model Engine
         const heartCanvas = document.getElementById("animatedHeart3D");
-        const hctx = heartCanvas.getContext("2d");
-        let pulseTimer = 0;
+        const heartCtx = heartCanvas.getContext("2d");
+        let heartScalePhase = 0;
 
-        function drawAnatomicalHeart() {
-            hctx.clearRect(0, 0, 110, 110);
+        function drawAnimatedHeart() {
+            heartCtx.clearRect(0, 0, 110, 110);
+            heartScalePhase += (activeBpm / 3600);
             
-            // Speed factor tied dynamically to the current selected patient's biological pulse rate
-            let speedFactor = (currentPulseInterval / 60) * 0.06;
-            pulseTimer += speedFactor;
+            // Calculate scale multiplier driven linearly by isolated biological pulse values
+            let scaleFactor = 1.0 + Math.sin(heartScalePhase * Math.PI * 2) * 0.08;
+            if (Math.sin(heartScalePhase * Math.PI * 2) < 0) scaleFactor = 1.0; // Sharp systolic twitch modeling
 
-            // Biological expansion phase variables (Systolic / Diastolic contract cycles)
-            let squeeze = 1 + Math.sin(pulseTimer) * 0.08;
-            let stretch = 1 - Math.sin(pulseTimer) * 0.04;
+            heartCtx.save();
+            heartCtx.translate(55, 50);
+            heartCtx.scale(scaleFactor, scaleFactor);
 
-            hctx.save();
-            hctx.translate(55, 60);
-            hctx.scale(squeeze, stretch);
+            // Multi-pass vector pathing to draw glowing wireframe heart symbol representation
+            heartCtx.beginPath();
+            heartCtx.moveTo(0, -15);
+            heartCtx.bezierCurveTo(-25, -35, -45, -10, -45, 15);
+            heartCtx.bezierCurveTo(-45, 35, -20, 50, 0, 65);
+            heartCtx.bezierCurveTo(20, 50, 45, 35, 45, 15);
+            heartCtx.bezierCurveTo(45, -10, 25, -35, 0, -15);
+            heartCtx.closePath();
 
-            // 1. Draw Superior & Inferior Vena Cava Pipelines (Blue Side - Left on diagram canvas_2.png)
-            hctx.fillStyle = "#2563eb"; 
-            hctx.fillRect(-28, -48, 10, 30); // Superior
-            hctx.fillRect(-24, 10, 8, 25);  // Inferior
+            heartCtx.fillStyle = "rgba(255, 42, 109, 0.15)";
+            heartCtx.fill();
+            heartCtx.strokeStyle = "#ff2a6d";
+            heartCtx.lineWidth = 3;
+            heartCtx.shadowBlur = 10;
+            heartCtx.shadowColor = "#ff2a6d";
+            heartCtx.stroke();
+            heartCtx.restore();
 
-            // 2. Draw Aorta Arch Channel (Red Main Top Pipe)
-            hctx.fillStyle = "#dc2626";
-            hctx.beginPath();
-            hctx.arc(4, -38, 12, Math.PI, 0, false);
-            hctx.lineWidth = 9;
-            hctx.strokeStyle = "#dc2626";
-            hctx.stroke();
-            // Aortic branches (Three branching pipelines pointing to upper body)
-            hctx.fillRect(-4, -52, 5, 10);
-            hctx.fillRect(4, -54, 5, 10);
-            hctx.fillRect(12, -51, 5, 10);
-
-            // 3. Pulmonary Artery Array (Blue crossover bridge)
-            hctx.fillStyle = "#1d4ed8";
-            hctx.beginPath();
-            hctx.moveTo(-15, -24);
-            hctx.lineTo(-5, -42);
-            hctx.lineTo(8, -32);
-            hctx.fill();
-
-            // 4. Main Organic Muscle Walls (Right and Left Ventricles / Atrium Chambers)
-            // Left heart side tissue (Anatomical Right - Shaded Blue-Crimson)
-            hctx.fillStyle = "#991b1b";
-            hctx.beginPath();
-            hctx.moveTo(-25, -20);
-            hctx.bezierCurveTo(-42, -20, -42, 15, -15, 32);
-            hctx.lineTo(0, 42); // Lower Apex point
-            hctx.lineTo(0, -15);
-            hctx.fill();
-
-            // Right heart side tissue (Anatomical Left Thick Muscle Wall - Deep Red/Pink)
-            hctx.fillStyle = "#b91c1c";
-            hctx.beginPath();
-            hctx.moveTo(25, -20);
-            hctx.bezierCurveTo(42, -20, 42, 18, 15, 34);
-            hctx.lineTo(0, 42); // Joins at lower apex base
-            hctx.lineTo(0, -15);
-            hctx.fill();
-
-            // 5. Light Outer Highlights & Shading Layers for real 3D Depth
-            hctx.strokeStyle = "rgba(255,255,255,0.2)";
-            hctx.lineWidth = 2;
-            hctx.beginPath();
-            hctx.arc(18, -2, 15, 0, Math.PI*2);
-            hctx.stroke();
-
-            hctx.restore();
-            requestAnimationFrame(drawAnatomicalHeart);
+            requestAnimationFrame(drawAnimatedHeart);
         }
 
-        // --- MICROCONTROLLER ECG LIVE VECTOR SIMULATION ---
-        const canvas = document.getElementById("liveEcgCanvas");
-        const ctx = canvas.getContext("2d");
-        let x = 0;
+        // Isolate & Inject Live Patient Profile Fields
+        function selectSubject(id) {
+            // Adjust left list active UI states cleanly
+            document.querySelectorAll(".subject-btn").forEach(b => b.classList.remove("active"));
+            event.currentTarget.classList.add("active");
 
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+            const p = subjectData.find(item => item.id === id);
+            if (!p) return;
 
-        function drawEcgLine() {
-            if (x > canvas.width) {
-                x = 0;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
+            activeBpm = p.pulse;
+            const status = getHealthStatus(p);
 
-            if (x === 0) {
-                ctx.strokeStyle = "rgba(0, 255, 204, 0.03)";
-                ctx.lineWidth = 1;
-                for(let i=0; i<canvas.height; i+=20) {
-                    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
-                }
-            }
-
-            let baseLine = canvas.height / 2;
-            let cyclePosition = x % Math.floor(6500 / currentPulseInterval);
-            let y = baseLine;
-
-            // Microcontroller Analog Pin Stream Mapping (P, Q, R, S, T Waves)
-            if (cyclePosition > 10 && cyclePosition <= 18) {
-                y -= 6; 
-            } else if (cyclePosition === 24) {
-                y += 8; 
-            } else if (cyclePosition === 26) {
-                y -= baseLine * 0.75; 
-            } else if (cyclePosition === 28) {
-                y += baseLine * 0.4; 
-            } else if (cyclePosition > 38 && cyclePosition <= 52) {
-                y -= 12; 
-            }
-
-            ctx.strokeStyle = "#00ffcc";
-            ctx.lineWidth = 3;
-            ctx.shadowBlur = 6;
-            ctx.shadowColor = "#00ffcc";
+            // Push structural text data into corresponding target UI tags
+            document.getElementById("panel-subject-title").innerText = `Subject Profile Check: #0${p.id}`;
+            document.getElementById("panel-subject-subtitle").innerHTML = `<span style="color:${status.color}">${status.label}</span>`;
+            document.getElementById("heart-bpm-numeric").innerText = p.pulse;
             
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            x += 2;
-            ctx.lineTo(x, y);
-            ctx.stroke();
-
-            ctx.shadowBlur = 0; 
-            requestAnimationFrame(drawEcgLine);
+            document.getElementById("m-demographics").innerText = `${p.sex} / Age ${p.age} / ${p.edu}`;
+            document.getElementById("m-bmi").innerText = `${p.bmi} (Wt: ${p.wt}kg / Ht: ${p.ht})`;
+            document.getElementById("m-bp").innerText = `${p.sbp} / ${p.dbp} mmHg`;
+            document.getElementById("m-pulse-spo2").innerText = `${p.pulse} BPM / ${p.spo2}% SpO2`;
+            document.getElementById("m-whoqol").innerText = p.whoqol;
+            document.getElementById("m-health-temp").innerText = `${p.hScore} Sc / ${p.temp}`;
+            document.getElementById("m-hrv").innerText = `${p.hrv} ms (RMSV: ${p.rmsv})`;
+            document.getElementById("m-lf-hf").innerText = `${p.lf} Hz / ${p.hf} Hz`;
+            document.getElementById("m-snr-psnr").innerText = `${p.snr.toFixed(2)}dB / ${p.psnr.toFixed(2)}dB`;
+            document.getElementById("m-cognitive").innerText = `MMSE: ${p.mmse} / MoCA: ${p.moca}`;
+            document.getElementById("m-mna").innerText = `${p.mna} Assessment Mark`;
+            document.getElementById("m-bg-details").innerText = `Dietary: ${p.diet}`;
+            document.getElementById("wave-caption").innerText = `Display showing computed signal wave pattern mapping for Subject #${p.id} running at a standard resting pulse rate of ${p.pulse} beats per minute.`;
         }
 
-        // --- BACKGROUND CHART CONTROLLERS ---
-        window.addEventListener('DOMContentLoaded', () => {
-            activateSubject(1, null);
-            drawEcgLine();
-            drawAnatomicalHeart();
+        // Setup Population Metric Trends Using Chart.js
+        function initializeCharts() {
+            const labels = subjectData.map(p => `S${p.id}`);
+            const sbpData = subjectData.map(p => p.sbp);
+            const dbpData = subjectData.map(p => p.dbp);
+            const mmseData = subjectData.map(p => p.mmse);
+            const mocaData = subjectData.map(p => p.moca);
 
-            // Dark Mode Bar Configuration
+            // Chart Configuration 1: Blood Pressure Trends
             new Chart(document.getElementById('populationBpChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: subjectData.map(s => `Sub ${s.id}`),
-                    datasets: [
-                        { label: 'Systolic Pressure (mmHg)', data: subjectData.map(s => s.sbp), backgroundColor: '#ff2a6d' },
-                        { label: 'Diastolic Pressure (mmHg)', data: subjectData.map(s => s.dbp), backgroundColor: '#05d9e8' }
-                    ]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8' } } },
-                    scales: { 
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        y: { beginAtZero: false, min: 50, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
-                    }
-                }
-            });
-
-            // Dark Mode Line Configuration
-            new Chart(document.getElementById('populationCognitiveChart').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: subjectData.map(s => `Sub ${s.id}`),
+                    labels: labels,
                     datasets: [
-                        { label: 'MMSE Index', data: subjectData.map(s => s.mmse), borderColor: '#00ffcc', tension: 0.2, fill: false },
-                        { label: 'MoCA Index', data: subjectData.map(s => s.moca), borderColor: '#f59e0b', tension: 0.2, fill: false }
+                        { label: 'Systolic SBP', data: sbpData, borderColor: '#ff2a6d', backgroundColor: 'rgba(255, 42, 109, 0.1)', borderWidth: 2, tension: 0.2, fill: true },
+                        { label: 'Diastolic DBP', data: dbpData, borderColor: '#05d9e8', backgroundColor: 'rgba(5, 217, 232, 0.05)', borderWidth: 2, tension: 0.2, fill: true }
                     ]
                 },
-                options: { 
-                    responsive: true, 
+                options: {
+                    responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8' } } },
-                    scales: { 
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        y: { max: 30, min: 0, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
-                    }
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    },
+                    plugins: { legend: { labels: { color: '#f1f5f9' } } }
                 }
             });
-        });
+
+            // Chart Configuration 2: Cognitive Matrix Trends
+            new Chart(document.getElementById('populationCognitiveChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'MMSE Range', data: mmseData, backgroundColor: '#00ffcc', borderRadius: 4 },
+                        { label: 'MoCA Range', data: mocaData, backgroundColor: '#f59e0b', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { max: 30, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    },
+                    plugins: { legend: { labels: { color: '#f1f5f9' } } }
+                }
+            });
+        }
+
+        // Master App Initialization Sequence
+        window.onload = () => {
+            initializeCharts();
+            selectSubject(1);
+            drawEcg();
+            drawAnimatedHeart();
+        };
     </script>
 </body>
 </html>
