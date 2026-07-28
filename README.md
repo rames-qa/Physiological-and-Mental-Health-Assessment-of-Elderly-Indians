@@ -1,6 +1,4 @@
-ou can directly copy this into your README.md.
-
-# 🩺Physiological and Mental Health Assessment of Elderly Indians
+#  Physiological and Mental Health Assessment of Elderly Indians
 
 ![Medical IoT](https://img.shields.io/badge/Domain-Medical%20IoT-blue)
 ![Biomedical Engineering](https://img.shields.io/badge/Field-Biomedical%20Engineering-green)
@@ -9,7 +7,7 @@ ou can directly copy this into your README.md.
 ![Embedded System](https://img.shields.io/badge/System-Embedded%20Healthcare-purple)
 
 
-# 📌 Project Overview
+#  Project Overview
 
 The assessment of physiological and mental health among elderly individuals is an important healthcare challenge due to the increasing aging population and prevalence of chronic diseases.
 
@@ -37,7 +35,7 @@ The system focuses on collecting and analyzing important health parameters such 
 
 ---
 
-# 🎓 Academic Information
+#  Academic Information
 
 **Project Title:**  
 Assessment of Physiological and Mental Health of Elderly (Indian Population)
@@ -54,7 +52,7 @@ BE Final Year Project
 
 ---
 
-# 🎯 Objective
+#  Objective
 
 To develop a wearable-based health monitoring system that continuously evaluates physiological and psychological health parameters among elderly Indians, enabling:
 
@@ -67,7 +65,7 @@ To develop a wearable-based health monitoring system that continuously evaluates
 
 ---
 
-# 🏥 Problem Statement
+#  Problem Statement
 
 Elderly individuals are more vulnerable to:
 
@@ -86,7 +84,7 @@ This project explores a remote healthcare monitoring approach using wearable sen
 
 ---
 
-# 🏗️ System Architecture
+#  System Architecture
 
 
              Elderly Patient
@@ -137,7 +135,7 @@ This project explores a remote healthcare monitoring approach using wearable sen
 
 ---
 
-# 🔧 Hardware Components
+#  Hardware Components
 
 ## 1. ECG Monitoring System
 
@@ -309,7 +307,7 @@ Capabilities:
 
 ---
 
-# 🌐 IoT Healthcare Integration
+#  IoT Healthcare Integration
 
 The system can be extended using IoT technologies for remote monitoring.
 
@@ -326,7 +324,7 @@ Possible devices:
 
 ---
 
-# ❤️ ECG Signal Processing
+#  ECG Signal Processing
 
 
 ECG represents the electrical activity of the heart.
@@ -353,7 +351,7 @@ Analysis performed:
 
 ---
 
-# 🧠 Mental Health Assessment
+#  Mental Health Assessment
 
 Psychological well-being assessment includes:
 
@@ -392,7 +390,7 @@ Assessment parameters:
 
 ---
 
-# 🔬 Signal Processing Workflow
+#  Signal Processing Workflow
 
 
 
@@ -418,7 +416,7 @@ Health Assessment
 
 ---
 
-# 🧪 Validation and Testing Approach
+#  Validation and Testing Approach
 
 The healthcare monitoring system can be validated using medical device testing practices.
 
@@ -436,7 +434,7 @@ The healthcare monitoring system can be validated using medical device testing p
 
 ---
 
-# ⚠️ Challenges
+#  Challenges
 
 During development:
 
@@ -450,7 +448,7 @@ During development:
 
 ---
 
-# 🚀 Modern Implementation Enhancement
+#  Modern Implementation Enhancement
 
 If redesigned with current technologies:
 
@@ -511,7 +509,7 @@ GitHub Actions
 
 ---
 
-# 🤖 AI-Based Future Scope
+#  AI-Based Future Scope
 
 Future enhancements:
 
@@ -531,7 +529,7 @@ Possible ML Algorithms:
 
 ---
 
-# 👨‍💻 QA Automation Perspective
+#  QA Automation Perspective
 
 This healthcare platform can be validated using software testing methodologies.
 
@@ -576,7 +574,7 @@ Test scenarios:
 
 ---
 
-# 📂 Repository Structure
+#  Repository Structure
 
 
 
@@ -609,7 +607,7 @@ Physiological-and-Mental-Health-Assessment-of-Elderly-Indians
 
 ---
 
-# 📚 Key Learning Outcomes
+#  Key Learning Outcomes
 
 Through this project, I gained knowledge in:
 
@@ -624,16 +622,23 @@ Through this project, I gained knowledge in:
 
 ---
 
-# 💼 Interview Summary (Healthcare R&D)
+#  Interview Summary (Healthcare R&D)
 
 "My BE final year project focused on elderly health monitoring using ECG, wearable sensors, HealthyPi, and embedded systems. We collected physiological parameters and analyzed ECG signals using MATLAB. This project gave me strong domain knowledge in medical devices. Combined with my 5.9 years of QA automation experience in Selenium, API testing, Python, and CI/CD, I can contribute to healthcare software validation and verification activities."
 
 ---
 
-# 📌 Future Vision
+#  Future Vision
 
 Building reliable healthcare solutions by combining:
 
 **Medical Electronics + Embedded Systems + AI + Software Quality Engineering**
 
 for safer and smarter patient monitoring.
+
+
+# Author
+
+Ramesh Kumar K
+
+Software Automation Engineer / Software Validation and Verification Engineer
